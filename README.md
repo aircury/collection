@@ -4,6 +4,10 @@ PHP Arrays with additional functionality. Arrays on steroids.
 
 ## Usage
 
+There are two ways of using this library. To create Collections of objects or Collections of PHP scalar types.
+
+### Object Collections
+
 To create you own Collection, the easiest way is to copy and adjust the sample `CarCollection`, replacing `Car` with
 the class that you need.
 
@@ -15,3 +19,10 @@ More generically, these are the steps to create your own Collection:
     - `offsetGet($offset)` to specify the return class.
     - `toArray()` to provide PHPDoc information about the elements of the array.
     - `first()` to specify the return class.
+
+### Scalar type Collections
+
+This library comes out of the box with the following Collections, ready to use:
+  - `StringCollection`
+
+If they do not suit your needs, you can extend any of them or the `AbstractScalarTypeCollection` to implement your own. 
