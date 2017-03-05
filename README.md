@@ -25,7 +25,10 @@ More generically, these are the steps to create your own Collection:
 This library comes out of the box with the following Collections, ready to use:
   - `StringCollection`
   - `StringOrNullCollection`
+  - `IntegerCollection`
+  - `IntegerOrNullCollection`
 
-These classes include additional expected functionality that you would expect from the data type, e.g. `implode()`, ...
+These classes include additional expected functionality that you would expect from the data type, e.g. `implode()`, 
+`sum()`, ...
 
 If they do not suit your needs, you can extend any of them or the `AbstractScalarTypeCollection` to implement your own. 
