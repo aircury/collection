@@ -2,22 +2,27 @@
 
 namespace Aircury\Collection;
 
-class StringCollection extends AbstractStringCollection
+class StringOrNullCollection extends AbstractStringCollection
 {
-    public function offsetGet($offset): string
+    protected function areNullsAllowed(): bool
+    {
+        return true;
+    }
+
+    public function offsetGet($offset): ?string
     {
         return $this->doOffsetGet($offset);
     }
 
     /**
-     * @return string[]
+     * @return string[]|null[]
      */
     function toArray(): array
     {
         return $this->getElements();
     }
 
-    public function first(): string
+    public function first(): ?string
     {
         return $this->doGetFirst();
     }

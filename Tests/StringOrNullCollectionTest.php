@@ -5,11 +5,11 @@ namespace Aircury\Collection;
 use Aircury\Collection\Test\Car;
 use PHPUnit_Framework_TestCase;
 
-class StringCollectionTest extends PHPUnit_Framework_TestCase
+class StringOrNullCollectionTest extends PHPUnit_Framework_TestCase
 {
     public function testBasicUsage(): void
     {
-        $strings = new StringCollection();
+        $strings = new StringOrNullCollection();
 
         $strings[] = 'a';
         $strings[] = 'b';
@@ -48,19 +48,22 @@ class StringCollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidElementAddedToCollection(): void
     {
-        $strings   = new StringCollection();
+        $strings   = new StringOrNullCollection();
         $strings[] = 'a';
         $strings[] = 3;
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testNullElementAddedToCollection(): void
     {
-        $strings   = new StringCollection();
+        $strings   = new StringOrNullCollection();
         $strings[] = 'a';
         $strings[] = null;
+
+        $this->assertCount(2, $strings);
+
+        $strings = new StringOrNullCollection([null, null, null]);
+
+        $this->assertCount(3, $strings);
     }
 
     /**
@@ -68,7 +71,7 @@ class StringCollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
-        new StringCollection(['x', 42]);
+        new StringOrNullCollection(['x', 42]);
     }
 
     /**
@@ -76,7 +79,7 @@ class StringCollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
-        new StringCollection(['x', new Car('Volvo')]);
+        new StringOrNullCollection(['x', new Car('Volvo')]);
     }
 
     /**
@@ -84,14 +87,14 @@ class StringCollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testRetrieveByInvalidKey(): void
     {
-        $strings = new StringCollection(['A' => 'a']);
+        $strings = new StringOrNullCollection(['A' => 'a']);
         $strings['X'];
     }
 
     public function testIterator(): void
     {
         $a       = 'a';
-        $strings = new StringCollection([$a]);
+        $strings = new StringOrNullCollection([$a]);
 
         foreach ($strings as $key => $value) {
             $this->assertEquals(0, $key);
@@ -101,8 +104,9 @@ class StringCollectionTest extends PHPUnit_Framework_TestCase
 
     public function testImplode(): void
     {
-        $strings = new StringCollection(['a', 'b', 'c']);
+        $strings = new StringOrNullCollection(['a', null, 'c']);
 
-        $this->assertEquals('a, b, c', $strings->implode(', '));
+        $this->assertEquals('a, c', $strings->implode(', '));
+        $this->assertEquals('a, , c', $strings->implode(', ', false));
     }
 }
