@@ -22,7 +22,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $cars);
         $this->assertEquals('Renault', $cars[0]->getMake());
         $this->assertEquals('Volvo', $cars[1]->getMake());
-        $this->assertEquals([$car1, $car2], $cars->getElements());
+        $this->assertEquals([$car1, $car2], $cars->toArray());
         $this->assertEquals($car1, $cars->first());
         $this->assertTrue(isset($cars[0]));
         $this->assertFalse(isset($cars[20]));
@@ -53,7 +53,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'x' => $car1,
                 42  => $car2,
             ],
-            $cars->getElements()
+            $cars->toArray()
         );
     }
 

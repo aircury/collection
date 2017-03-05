@@ -6,13 +6,26 @@ use Aircury\Collection\AbstractCollection;
 
 class CarCollection extends AbstractCollection
 {
-    function getType(): string
+    function getClass(): string
     {
         return Car::class;
     }
 
     public function offsetGet($offset): Car
     {
-        return parent::offsetGet($offset);
+        return $this->doOffsetGet($offset);
+    }
+
+    /**
+     * @return Car[]
+     */
+    function toArray(): array
+    {
+        return $this->getElements();
+    }
+
+    public function first(): Car
+    {
+        return $this->doGetFirst();
     }
 }

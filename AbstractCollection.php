@@ -15,29 +15,34 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
     /**
      * @var string
      */
-    private $type;
+    private $class;
 
     public function __construct(array $elements = [])
     {
-        $this->type = $this->getType();
+        $this->class = $this->getClass();
 
         foreach ($elements as $element) {
-            if (!is_a($element, $this->type)) {
-                throw UnexpectedElementException::classConstraint($this->type, $element);
+            if (!is_a($element, $this->class)) {
+                throw UnexpectedElementException::classConstraint($this->class, $element);
             }
         }
 
         $this->elements = $elements;
     }
 
-    abstract function getType(): string;
+    /**
+     * The canonical class name that all elements on this collection are expected to be
+     *
+     * @return string
+     */
+    abstract function getClass(): string;
 
     public function offsetExists($offset): bool
     {
         return isset($this->elements[$offset]) || array_key_exists($offset, $this->elements);
     }
 
-    public function offsetGet($offset)
+    protected function doOffsetGet($offset)
     {
         if (!isset($this->elements[$offset])) {
             throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
@@ -48,8 +53,8 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
 
     public function offsetSet($offset, $element): void
     {
-        if (!is_a($element, $this->type)) {
-            throw UnexpectedElementException::classConstraint($this->type, $element);
+        if (!is_a($element, $this->class)) {
+            throw UnexpectedElementException::classConstraint($this->class, $element);
         }
 
         null === $offset
@@ -62,17 +67,21 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
         unset($this->elements[$offset]);
     }
 
-    public function getElements(): array
+    abstract function toArray(): array;
+
+    protected function getElements(): array
     {
         return $this->elements;
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->elements);
     }
 
-    public function first()
+    abstract public function first();
+
+    public function doGetFirst()
     {
         return reset($this->elements);
     }
