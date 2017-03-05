@@ -103,4 +103,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $cars = new CarCollection(['A' => new Car('Porsche')]);
         $cars['X'];
     }
+
+    public function testIterator(): void
+    {
+        $a    = new Car('Porsche');
+        $cars = new CarCollection([$a]);
+
+        foreach ($cars as $key => $value) {
+            $this->assertEquals(0, $key);
+            $this->assertEquals($a, $value);
+        }
+    }
 }

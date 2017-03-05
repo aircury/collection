@@ -5,7 +5,7 @@ namespace Aircury\Collection;
 use Aircury\Collection\Exceptions\InvalidKeyException;
 use Aircury\Collection\Exceptions\UnexpectedElementException;
 
-abstract class AbstractCollection implements \ArrayAccess, \Countable
+abstract class AbstractCollection implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * @var mixed[]
@@ -75,5 +75,10 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable
     public function first()
     {
         return reset($this->elements);
+    }
+
+    public function getIterator(): \ArrayIterator
+    {
+        return new \ArrayIterator($this->elements);
     }
 }
