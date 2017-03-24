@@ -3,6 +3,7 @@
 namespace Aircury\Collection;
 
 use Aircury\Collection\Exceptions\InvalidKeyException;
+use Aircury\Collection\Exceptions\ProtectedKeyException;
 use Aircury\Collection\Exceptions\UnexpectedElementException;
 
 abstract class AbstractCollection implements \ArrayAccess, \Countable, \IteratorAggregate
@@ -17,6 +18,16 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
      */
     private $class;
 
+    /**
+     * @var bool
+     */
+    private $isAssociative = false;
+
+    /**
+     * @var int
+     */
+    private $count = 0;
+
     public function __construct(array $elements = [])
     {
         $this->class = $this->getClass();
@@ -28,6 +39,28 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
         }
 
         $this->elements = $elements;
+        $this->count    = count($elements);
+
+        $this->evaluateIfItIsAssociative();
+    }
+
+    private function evaluateIfItIsAssociative(): void
+    {
+        if (
+            0 !== $this->count &&
+            ($keys = array_keys($this->elements)) !== ($range = range(0, $this->count - 1)) &&
+            !$this->isSameButOutOfOrder($keys, $range)
+        ) {
+            $this->isAssociative = true;
+        }
+    }
+
+    private function isSameButOutOfOrder(array $a, array $b): bool
+    {
+        sort($a);
+        sort($b);
+
+        return $a === $b;
     }
 
     /**
@@ -39,7 +72,7 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
 
     public function offsetExists($offset): bool
     {
-        return isset($this->elements[$offset]) || array_key_exists($offset, $this->elements);
+        return array_key_exists($offset, $this->elements);
     }
 
     protected function doOffsetGet($offset)
@@ -57,14 +90,34 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
             throw UnexpectedElementException::classConstraint($this->class, $element);
         }
 
-        null === $offset
-            ? $this->elements[] = $element
-            : $this->elements[$offset] = $element;
+        if (null === $offset) {
+            $this->elements[] = $element;
+
+            $this->count++;
+        } else {
+            $this->elements[$offset] = $element;
+
+            if (!$this->isAssociative) {
+                if (!is_int($offset) || $offset < 0 || $offset > $this->count) {
+                    $this->isAssociative = true;
+                } elseif ($offset === $this->count) {
+                    $this->count++;
+                }
+            }
+        }
     }
 
     public function offsetUnset($offset): void
     {
         unset($this->elements[$offset]);
+
+        if (!$this->isAssociative) {
+            if (is_int($offset) && $offset < $this->count - 1) {
+                $this->isAssociative = true;
+            } elseif ($offset === $this->count) {
+                $this->count--;
+            }
+        }
     }
 
     abstract function toArray(): array;
@@ -89,5 +142,67 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->elements);
+    }
+
+    public function isAssociative(): bool
+    {
+        return $this->isAssociative;
+    }
+
+    /**
+     * Merges the two arrays of elements
+     *
+     * @param array $elements
+     */
+    public function merge(array $elements): void
+    {
+        $count = count($elements);
+
+        if (0 === $count) {
+            return;
+        }
+
+        foreach ($elements as $element) {
+            if (!is_a($element, $this->class)) {
+                throw UnexpectedElementException::classConstraint($this->class, $element);
+            }
+        }
+
+        $this->elements = array_merge($this->elements, $elements);
+        $this->count    = count($this->elements);
+
+        $this->evaluateIfItIsAssociative();
+    }
+
+    /**
+     * Appends elements at the end of the collection, but it cannot overwrite existing elements, unless is non-associative
+     *
+     * @param array $elements
+     */
+    public function append(array $elements): void
+    {
+        $count = count($elements);
+
+        if (0 === $count) {
+            return;
+        }
+
+        if ($this->isAssociative) {
+            if (0 !== count(array_intersect_key($this->elements, $elements))) {
+                throw ProtectedKeyException::overwritingKeys(array_keys(array_intersect_key($this->elements, $elements)));
+            }
+        } else {
+            $keys = array_keys($elements);
+
+            if (
+                $keys !== range(0, $count - 1) &&
+                $keys !== ($range = range($this->count, $this->count + $count - 1)) &&
+                !$this->isSameButOutOfOrder($keys, $range)
+            ) {
+                throw ProtectedKeyException::overwritingKeys(array_keys(array_intersect_key($this->elements, $elements)));
+            }
+        }
+
+        $this->merge($elements);
     }
 }

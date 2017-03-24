@@ -114,4 +114,108 @@ class ModelTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($a, $value);
         }
     }
+
+    public function testAssociative(): void
+    {
+        $cars = new CarCollection();
+
+        $this->assertFalse($cars->isAssociative());
+
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+
+        $cars[] = $a;
+        $cars[] = $b;
+
+        $this->assertFalse($cars->isAssociative());
+
+        $cars[2] = $b;
+
+        $this->assertFalse($cars->isAssociative());
+
+        unset($cars[2]);
+
+        $this->assertFalse($cars->isAssociative());
+
+        unset($cars[0]);
+
+        $this->assertTrue($cars->isAssociative());
+
+        $cars  = new CarCollection([$a, $a, $b, $b]);
+        $cars2 = clone $cars;
+
+        $this->assertFalse($cars->isAssociative());
+
+        unset($cars[1]);
+
+        $this->assertTrue($cars->isAssociative());
+
+        unset($cars2[0]);
+
+        $this->assertTrue($cars->isAssociative());
+
+        $cars = new CarCollection(['0' => $a]);
+
+        $this->assertFalse($cars->isAssociative());
+
+        $cars['1'] = $b;
+
+        $this->assertFalse($cars->isAssociative());
+
+        $cars = new CarCollection([1 => $a, 2 => $a, 0 => $b]);
+
+        $this->assertFalse($cars->isAssociative());
+    }
+
+    public function testMerge(): void
+    {
+        $a    = new Car('Porsche');
+        $b    = new Car('BMW');
+        $cars = new CarCollection([$a]);
+
+        $cars->merge([$b]);
+
+        $this->assertCount(2, $cars);
+        $this->assertEquals('BMW', $cars[1]->getMake());
+    }
+
+    /**
+     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
+     */
+    public function testInvalidMerge(): void
+    {
+        $a    = new Car('Porsche');
+        $b    = new Human();
+        $cars = new CarCollection([$a]);
+
+        $cars->merge([$b]);
+    }
+
+    public function testAppend(): void
+    {
+        $a    = new Car('Porsche');
+        $b    = new Car('BMW');
+        $cars = new CarCollection([$a]);
+
+        $cars->append([$b]);
+
+        $this->assertCount(2, $cars);
+        $this->assertEquals('BMW', $cars[1]->getMake());
+
+        $cars->append([2 => $b, 3 => $a]);
+
+        $this->assertFalse($cars->isAssociative());
+    }
+
+    /**
+     * @expectedException \Aircury\Collection\Exceptions\ProtectedKeyException
+     */
+    public function testInvalidAppend(): void
+    {
+        $a    = new Car('Porsche');
+        $b    = new Car('BMW');
+        $cars = new CarCollection([1 => $a]);
+
+        $cars->append([1 => $b]);
+    }
 }
