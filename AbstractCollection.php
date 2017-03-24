@@ -150,7 +150,7 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
     }
 
     /**
-     * Merges the two arrays of elements
+     * Merges an array of elements to this Collection
      *
      * @param array $elements
      */
@@ -169,6 +169,25 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
         }
 
         $this->elements = array_merge($this->elements, $elements);
+        $this->count    = count($this->elements);
+
+        $this->evaluateIfItIsAssociative();
+    }
+
+    /**
+     * Merges a Collection of elements to this Collection
+     *
+     * @param AbstractCollection $collection
+     */
+    public function mergeCollection(AbstractCollection $collection): void
+    {
+        $count = $collection->count();
+
+        if (0 === $count) {
+            return;
+        }
+
+        $this->elements = array_merge($this->elements, $collection->getElements());
         $this->count    = count($this->elements);
 
         $this->evaluateIfItIsAssociative();
@@ -204,5 +223,15 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
         }
 
         $this->merge($elements);
+    }
+
+    /**
+     * Appends a collection at the end of this collection, but it cannot overwrite existing elements, unless is non-associative
+     *
+     * @param AbstractCollection $collection
+     */
+    public function appendCollection(AbstractCollection $collection): void
+    {
+        $this->append($collection->toArray());
     }
 }
