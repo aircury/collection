@@ -243,4 +243,23 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertCount(4, $cars);
         $this->assertEquals('BMW', $cars[3]->getMake());
     }
+
+    public function testAppendCollectionToEmpty(): void
+    {
+        $a     = new Car('Porsche');
+        $b     = new Car('BMW');
+        $cars  = new CarCollection([$a, $b]);
+        $empty = new CarCollection();
+
+        $empty->appendCollection($cars);
+
+        $this->assertCount(2, $empty);
+
+        $cars  = new CarCollection(['a' => $a, 'b' => $b]);
+        $empty = new CarCollection();
+
+        $empty->appendCollection($cars);
+
+        $this->assertCount(2, $empty);
+    }
 }

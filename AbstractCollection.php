@@ -206,7 +206,7 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
             return;
         }
 
-        if ($this->isAssociative) {
+        if ($this->isAssociative || 0 === count($this->elements)) {
             if (0 !== count(array_intersect_key($this->elements, $elements))) {
                 throw ProtectedKeyException::overwritingKeys(array_keys(array_intersect_key($this->elements, $elements)));
             }
