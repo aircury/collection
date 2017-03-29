@@ -234,4 +234,19 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
     {
         $this->append($collection->toArray());
     }
+
+    public function prepend(array $elements): void
+    {
+        $currentElements = $this->elements;
+        $this->elements  = [];
+
+        $this->merge($elements);
+        $this->append($currentElements);
+    }
+
+    public function prependCollection(AbstractCollection $collection): void
+    {
+        $collection->appendCollection($this);
+        $this->elements = $collection->toArray();
+    }
 }
