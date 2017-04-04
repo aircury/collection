@@ -3,9 +3,9 @@
 namespace Aircury\Collection;
 
 use Aircury\Collection\Test\Car;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class IntegerOrNullCollectionTest extends PHPUnit_Framework_TestCase
+class IntegerOrNullCollectionTest extends TestCase
 {
     public function testBasicUsage(): void
     {
