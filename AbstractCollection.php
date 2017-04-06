@@ -122,6 +122,11 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
 
     abstract function toArray(): array;
 
+    protected function setElements(array $elements): void
+    {
+        $this->elements = $elements;
+    }
+
     protected function getElements(): array
     {
         return $this->elements;
