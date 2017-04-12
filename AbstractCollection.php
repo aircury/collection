@@ -254,4 +254,9 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
         $collection->appendCollection($this);
         $this->elements = $collection->toArray();
     }
+
+    public function usort(callable $sort): void
+    {
+        usort($this->elements, $sort);
+    }
 }
