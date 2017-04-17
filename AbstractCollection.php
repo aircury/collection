@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Aircury\Collection;
 
@@ -258,5 +258,30 @@ abstract class AbstractCollection implements \ArrayAccess, \Countable, \Iterator
     public function usort(callable $sort): void
     {
         usort($this->elements, $sort);
+    }
+
+    /**
+     * @param callable $filter
+     * @param bool     $returnNewCollection Return new collection or change this one
+     *
+     * @return $this|static
+     */
+    public function filter(callable $filter, bool $returnNewCollection = true)
+    {
+        $elements = [];
+
+        foreach ($this->toArray() as $key => $element) {
+            if ($filter($element)) {
+                $elements[$key] = $element;
+            }
+        }
+
+        if ($returnNewCollection) {
+            return new static($elements);
+        }
+
+        $this->setElements($elements);
+
+        return $this;
     }
 }
