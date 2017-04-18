@@ -4,7 +4,7 @@ namespace Aircury\Collection;
 
 use Aircury\Collection\Exceptions\UnexpectedElementException;
 
-abstract class AbstractComparableCollection extends AbstractCollection implements ComparableCollectionInterface
+abstract class AbstractComparableCollection extends AbstractCollection implements ComparableCollectionInterface, ComparableInterface
 {
     public function __construct(array $elements = [])
     {
@@ -37,5 +37,23 @@ abstract class AbstractComparableCollection extends AbstractCollection implement
     public function contains(ComparableInterface $needle, bool $strict = false): bool
     {
         return false !== $this->search($needle, $strict);
+    }
+
+    public function isSameAs(ComparableInterface $collection): bool
+    {
+        if (!$collection instanceof ComparableCollectionInterface) {
+            return false;
+        }
+
+        return $this->toArray() == $collection->toArray();
+    }
+
+    public function isIdenticalTo(ComparableInterface $collection): bool
+    {
+        if (!$collection instanceof ComparableCollectionInterface) {
+            return false;
+        }
+
+        return $this->toArray() === $collection->toArray();
     }
 }

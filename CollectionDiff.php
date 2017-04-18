@@ -141,6 +141,11 @@ class CollectionDiff
         return $this->changes[self::CHANGED];
     }
 
+    public function getIndexChanges(): array
+    {
+        return $this->indexChanges;
+    }
+
     public function hasReindices(): bool
     {
         return $this->numberChanges !== count($this->changes[self::ADDED]) + count($this->changes[self::REMOVED]) + count($this->changes[self::CHANGED]);
