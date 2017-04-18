@@ -25,6 +25,8 @@ interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
 
     public function toArray(): array;
 
+    public function isEmpty(): bool;
+
     public function count(): int;
 
     public function first();

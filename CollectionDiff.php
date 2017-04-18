@@ -33,6 +33,10 @@ class CollectionDiff
         ComparableCollectionInterface $to,
         bool $strict = false
     ) {
+        if (($isFromEmpty = $from->isEmpty()) && $to->isEmpty()) {
+            return;
+        }
+
         $comparisonMethod = $strict ? 'isIdenticalTo' : 'isSameAs';
 
         /** @var ComparableInterface[] $fromElements */
@@ -95,7 +99,7 @@ class CollectionDiff
 
             foreach ($toElements as $element) {
                 if (false !== ($search = $from->search($element, $strict))) {
-                    // Is there somewhere
+                    // It is there somewhere
 
                     if ($search !== $indexChangesCount) {
                         $this->numberChanges++;
@@ -107,7 +111,10 @@ class CollectionDiff
                 } else {
                     // It is a new one
 
-                    $this->indexChanges[$indexChangesCount++]  = [self::ADDED, $addedCount];
+                    if (!$isFromEmpty) {
+                        $this->indexChanges[$indexChangesCount++] = [self::ADDED, $addedCount];
+                    }
+
                     $this->changes[self::ADDED][$addedCount++] = $element;
 
                     $this->numberChanges++;
@@ -115,7 +122,7 @@ class CollectionDiff
             }
         }
 
-        if (!empty($fromElements)) {
+        if (!$isFromEmpty) {
             $this->changes[self::REMOVED] = $fromElements;
             $this->numberChanges          += count($fromElements);
         }
@@ -148,7 +155,7 @@ class CollectionDiff
 
     public function hasReindices(): bool
     {
-        return $this->numberChanges !== count($this->changes[self::ADDED]) + count($this->changes[self::REMOVED]) + count($this->changes[self::CHANGED]);
+        return !empty($this->indexChanges) && $this->numberChanges !== count($this->changes[self::ADDED]) + count($this->changes[self::REMOVED]) + count($this->changes[self::CHANGED]);
     }
 
     /**
@@ -170,7 +177,7 @@ class CollectionDiff
             return $collection;
         }
 
-        if ($keepOriginalOrder || $this->hasReindices()) {
+        if (!empty($this->indexChanges) && ($keepOriginalOrder || $this->hasReindices())) {
             foreach ($this->indexChanges as $destinationKey => [$sourceId, $sourceKey]) {
                 $collection[$destinationKey] = self::SOURCE === $sourceId
                     ? $sourceCollection[$sourceKey]

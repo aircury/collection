@@ -107,6 +107,11 @@ abstract class AbstractCollection implements CollectionInterface
         return $this->elements;
     }
 
+    public function isEmpty(): bool
+    {
+        return empty($this->elements);
+    }
+
     public function count(): int
     {
         return count($this->elements);
