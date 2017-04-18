@@ -9,7 +9,7 @@ class ProtectedKeyException extends \LogicException
      *
      * @return ProtectedKeyException
      */
-    public static function overwritingKeys(array $keys): ProtectedKeyException
+    public static function overwritingKeys(array $keys): self
     {
         return new self(
             sprintf(

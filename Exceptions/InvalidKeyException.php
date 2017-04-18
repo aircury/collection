@@ -10,7 +10,7 @@ class InvalidKeyException extends \LogicException
      *
      * @return InvalidKeyException
      */
-    public static function invalidOffset(string $offset, array $validOffsets = []): InvalidKeyException
+    public static function invalidOffset(string $offset, array $validOffsets = []): self
     {
         return new self(
             sprintf(
