@@ -23,9 +23,13 @@ class CollectionDiffTest extends TestCase
         $carDiff = new CollectionDiff($noCars, $cars);
 
         $this->assertEquals(2, $carDiff->getChangesCount());
-        $this->assertCount(2, $carDiff->getAddedElements());
-        $this->assertCount(0, $carDiff->getRemovedElements());
-        $this->assertCount(0, $carDiff->getChangedElements());
+        $this->assertEquals(
+            [
+                'car1' => [CollectionDiff::ADDED, $a],
+                'car2' => [CollectionDiff::ADDED, $b],
+            ],
+            $carDiff->getChanges()
+        );
 
         $noCarsAfterApplied = $carDiff->apply($noCars);
 
@@ -35,9 +39,13 @@ class CollectionDiffTest extends TestCase
         $carDiff = new CollectionDiff($cars, $noCars);
 
         $this->assertEquals(2, $carDiff->getChangesCount());
-        $this->assertCount(0, $carDiff->getAddedElements());
-        $this->assertCount(2, $carDiff->getRemovedElements());
-        $this->assertCount(0, $carDiff->getChangedElements());
+        $this->assertEquals(
+            [
+                'car1' => [CollectionDiff::REMOVED, true],
+                'car2' => [CollectionDiff::REMOVED, true],
+            ],
+            $carDiff->getChanges()
+        );
 
         $carsAfterApplied = $carDiff->apply($cars);
 
@@ -56,9 +64,14 @@ class CollectionDiffTest extends TestCase
         $carDiff = new CollectionDiff($cars, $otherCars);
 
         $this->assertEquals(3, $carDiff->getChangesCount());
-        $this->assertCount(1, $carDiff->getAddedElements());
-        $this->assertCount(0, $carDiff->getRemovedElements());
-        $this->assertCount(0, $carDiff->getChangedElements());
+        $this->assertEquals(
+            [
+                'car1' => [CollectionDiff::ADDED, $c],
+                'car2' => [CollectionDiff::SOURCE, 'car1'],
+                'car3' => [CollectionDiff::SOURCE, 'car2'],
+            ],
+            $carDiff->getChanges()
+        );
 
         $carsAfterApplied = $carDiff->apply($cars);
 
@@ -76,9 +89,13 @@ class CollectionDiffTest extends TestCase
         $carDiff = new CollectionDiff($noCars, $cars);
 
         $this->assertEquals(2, $carDiff->getChangesCount());
-        $this->assertCount(2, $carDiff->getAddedElements());
-        $this->assertCount(0, $carDiff->getRemovedElements());
-        $this->assertCount(0, $carDiff->getChangedElements());
+        $this->assertEquals(
+            [
+                [CollectionDiff::ADDED, $a],
+                [CollectionDiff::ADDED, $b],
+            ],
+            $carDiff->getChanges()
+        );
 
         $noCarsAfterApplied = $carDiff->apply($noCars);
 
@@ -88,9 +105,13 @@ class CollectionDiffTest extends TestCase
         $carDiff = new CollectionDiff($cars, $noCars);
 
         $this->assertEquals(2, $carDiff->getChangesCount());
-        $this->assertCount(0, $carDiff->getAddedElements());
-        $this->assertCount(2, $carDiff->getRemovedElements());
-        $this->assertCount(0, $carDiff->getChangedElements());
+        $this->assertEquals(
+            [
+                [CollectionDiff::REMOVED, true],
+                [CollectionDiff::REMOVED, true],
+            ],
+            $carDiff->getChanges()
+        );
 
         $carsAfterApplied = $carDiff->apply($cars);
 
@@ -103,13 +124,18 @@ class CollectionDiffTest extends TestCase
         $carDiff = new CollectionDiff($cars, $otherCars);
 
         $this->assertEquals(3, $carDiff->getChangesCount());
-        $this->assertCount(1, $carDiff->getAddedElements());
-        $this->assertCount(0, $carDiff->getRemovedElements());
-        $this->assertCount(0, $carDiff->getChangedElements());
+        $this->assertEquals(
+            [
+                [CollectionDiff::ADDED, $c],
+                [CollectionDiff::SOURCE, 0],
+                [CollectionDiff::SOURCE, 1],
+            ],
+            $carDiff->getChanges()
+        );
 
         $carsAfterApplied = $carDiff->apply($cars);
 
         $this->assertCount(3, $carsAfterApplied);
-        $this->assertEquals($otherCars, $carsAfterApplied);
+        $this->assertEquals($otherCars->toArray(), $carsAfterApplied->toArray(), '', 0.0, 10, true);
     }
 }

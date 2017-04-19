@@ -4,40 +4,45 @@ namespace Aircury\Collection;
 
 class CollectionDiff
 {
-    private const ADDED = 0;
-    private const REMOVED = 1;
-    private const CHANGED = 2;
-    private const SOURCE = 3;
+    const SOURCE = 0;
+    const ADDED = 1;
+    const REMOVED = 2;
+    const CHANGED = 3;
 
     /**
-     * @var ComparableInterface[][]
+     * @var ComparableInterface[]|int[] 'destinationIndex' => [whichSource, sourceIndex]
      */
-    private $changes = [
-        self::ADDED   => [],
-        self::REMOVED => [],
-        self::CHANGED => [],
-    ];
-
-    /**
-     * @var array 'destinationIndex' => [whichSource, sourceIndex]
-     */
-    private $indexChanges = [];
+    private $changes = [];
 
     /**
      * @var int
      */
     private $numberChanges = 0;
 
+    /**
+     * @param ComparableCollectionInterface $from
+     * @param ComparableCollectionInterface $to
+     * @param bool                          $strict
+     * @param bool                          $keepOriginalOrder
+     * @param callable|null                 $recordChange If provided, it is a method that will be called when it needs
+     *                                                    to store the addition, removal or difference of an element.
+     *                                                    The callable will be:
+     *                                                    function (self::ADDED, $key, $element),
+     *                                                    function (self::REMOVED, $key, $element) or
+     *                                                    function (self::CHANGED, $key, $fromElement, $toElement)
+     */
     public function __construct(
         ComparableCollectionInterface $from,
         ComparableCollectionInterface $to,
-        bool $strict = false
+        bool $strict = false,
+        bool $keepOriginalOrder = false,
+        ?callable $recordChange = null
     ) {
-        if (($isFromEmpty = $from->isEmpty()) && $to->isEmpty()) {
+        if ($from->isEmpty() && $to->isEmpty()) {
             return;
         }
 
-        $comparisonMethod = $strict ? 'isIdenticalTo' : 'isSameAs';
+        $comparisonMethod = $strict ? ComparableInterface::IS_IDENTICAL_TO : ComparableInterface::IS_SAME_AS;
 
         /** @var ComparableInterface[] $fromElements */
         $fromElements = $from->toArray();
@@ -45,86 +50,70 @@ class CollectionDiff
         /** @var ComparableInterface[] $toElements */
         $toElements = $to->toArray();
 
-        if ($to->isAssociative()) {
-            foreach ($toElements as $key => $element) {
-                if (array_key_exists($key, $fromElements)) {
-                    if ($element->$comparisonMethod($fromElements[$key])) {
-                        // Key exists and it is the same
-                        $this->indexChanges[$key] = [self::SOURCE, $key];
+        foreach ($toElements as $key => $element) {
+            if (array_key_exists($key, $fromElements)) {
+                if ($element->compareTo($comparisonMethod, $fromElements[$key])) {
+                    // Key exists and it is the same
+
+                    $this->changes[$key] = [self::SOURCE, $key];
+
+                    unset($fromElements[$key]);
+                } else {
+                    $this->numberChanges++;
+
+                    if (false !== ($search = $from->search($element, $strict))) {
+                        // Is there, but has another key
+
+                        $this->changes[$key] = [self::SOURCE, $search];
+
+                        unset($fromElements[$search]);
+                    } elseif (false !== $to->search($fromElements[$key], $strict)) {
+                        // It is not elsewhere but the one with that index is needed later on (this element is new)
+
+                        $this->changes[$key] = [
+                            self::ADDED,
+                            null === $recordChange ? $element : $recordChange(self::ADDED, $key, $element),
+                        ];
+                    } else {
+                        // It is not elsewhere, it has changed
+
+                        $this->changes[$key] = [
+                            self::CHANGED,
+                            null === $recordChange ? $element : $recordChange(self::CHANGED, $key, $element, $fromElements[$key]),
+                        ];
 
                         unset($fromElements[$key]);
-                    } else {
-                        $this->numberChanges++;
-
-                        if (false !== ($search = $from->search($element, $strict))) {
-                            // Is there, but has another key
-
-                            $this->indexChanges[$key] = [self::SOURCE, $search];
-
-                            unset($fromElements[$search]);
-                        } elseif (false !== $to->search($fromElements[$key], $strict)) {
-                            // It is not elsewhere but the one with that index is needed later on (this element is new)
-
-                            $this->changes[self::ADDED][$key] = $element;
-                            $this->indexChanges[$key]         = [self::ADDED, $key];
-                        } else {
-                            // It is not elsewhere, it has changed
-
-                            $this->changes[self::CHANGED] = $element;
-                            $this->indexChanges[$key]     = [self::CHANGED, $key];
-
-                            unset($fromElements[$key]);
-                        }
                     }
-                } elseif (false !== ($search = $from->search($element, $strict))) {
-                    // Is there, but has another key
-
-                    $this->indexChanges[$key] = [self::SOURCE, $search];
-
-                    unset($fromElements[$search]);
-
-                    $this->numberChanges++;
-                } else {
-                    // It is not there, it is new
-
-                    $this->changes[self::ADDED][$key] = $element;
-                    $this->indexChanges[$key]         = [self::ADDED, $key];
-
-                    $this->numberChanges++;
                 }
-            }
-        } else {
-            $addedCount        = 0;
-            $indexChangesCount = 0;
+            } elseif (false !== ($search = $from->search($element, $strict))) {
+                // Is there, but has another key
 
-            foreach ($toElements as $element) {
-                if (false !== ($search = $from->search($element, $strict))) {
-                    // It is there somewhere
+                $this->changes[$key] = [self::SOURCE, $search];
 
-                    if ($search !== $indexChangesCount) {
-                        $this->numberChanges++;
-                    }
+                unset($fromElements[$search]);
 
-                    $this->indexChanges[$indexChangesCount++] = [self::SOURCE, $search];
+                $this->numberChanges++;
+            } else {
+                // It is not there, it is new
 
-                    unset($fromElements[$search]);
-                } else {
-                    // It is a new one
+                $this->changes[$key] = [
+                    self::ADDED,
+                    null === $recordChange ? $element : $recordChange(self::ADDED, $key, $element),
+                ];
 
-                    if (!$isFromEmpty) {
-                        $this->indexChanges[$indexChangesCount++] = [self::ADDED, $addedCount];
-                    }
-
-                    $this->changes[self::ADDED][$addedCount++] = $element;
-
-                    $this->numberChanges++;
-                }
+                $this->numberChanges++;
             }
         }
 
-        if (!$isFromEmpty) {
-            $this->changes[self::REMOVED] = $fromElements;
-            $this->numberChanges          += count($fromElements);
+        if (!empty($fromElements)) {
+            foreach ($fromElements as $key => $element) {
+                $this->changes[$key] = [
+                    self::REMOVED,
+                    null === $recordChange ? true : $recordChange(self::REMOVED, $key, $element),
+                ];
+            }
+
+            $this->numberChanges += count($fromElements);
         }
     }
 
@@ -133,29 +122,9 @@ class CollectionDiff
         return $this->numberChanges;
     }
 
-    public function getAddedElements(): array
+    public function getChanges(): array
     {
-        return $this->changes[self::ADDED];
-    }
-
-    public function getRemovedElements(): array
-    {
-        return $this->changes[self::REMOVED];
-    }
-
-    public function getChangedElements(): array
-    {
-        return $this->changes[self::CHANGED];
-    }
-
-    public function getIndexChanges(): array
-    {
-        return $this->indexChanges;
-    }
-
-    public function hasReindices(): bool
-    {
-        return !empty($this->indexChanges) && $this->numberChanges !== count($this->changes[self::ADDED]) + count($this->changes[self::REMOVED]) + count($this->changes[self::CHANGED]);
+        return $this->changes;
     }
 
     /**
@@ -169,25 +138,27 @@ class CollectionDiff
     public function apply(ComparableCollectionInterface $sourceCollection, bool $keepOriginalOrder = false): ComparableCollectionInterface
     {
         $collectionClass = get_class($sourceCollection);
+        $source          = $sourceCollection->toArray();
+        $array           = [];
 
-        /** @var ComparableCollectionInterface $collection */
-        $collection = new $collectionClass();
-
-        if (0 === $this->numberChanges) {
-            return $collection;
-        }
-
-        if (!empty($this->indexChanges) && ($keepOriginalOrder || $this->hasReindices())) {
-            foreach ($this->indexChanges as $destinationKey => [$sourceId, $sourceKey]) {
-                $collection[$destinationKey] = self::SOURCE === $sourceId
-                    ? $sourceCollection[$sourceKey]
-                    : $this->changes[$sourceId][$sourceKey];
+        foreach ($this->changes as $key => [$action, $item]) {
+            if (self::SOURCE === $action) {
+                if ($item !== $key) {
+                    $array[$key] = $sourceCollection[$item];
+                }
+            } elseif (self::ADDED === $action) {
+                $array[$key] = $item;
+            } elseif (self::REMOVED === $action) {
+                unset($array[$key]);
+            } else {
+                $array[$key] = $item;
             }
-        } else {
-            $collection->merge($this->changes[self::CHANGED]);
-            $collection->merge($this->changes[self::ADDED]);
         }
 
-        return $collection;
+        if ($keepOriginalOrder) {
+            $array = array_merge($this->changes, $source);
+        }
+
+        return new $collectionClass($array);
     }
 }

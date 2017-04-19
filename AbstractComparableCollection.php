@@ -23,10 +23,10 @@ abstract class AbstractComparableCollection extends AbstractCollection implement
      */
     public function search(ComparableInterface $needle, bool $strict = false)
     {
-        $comparisonMethod = $strict ? 'isIdenticalTo' : 'isSameAs';
+        $comparisonMethod = $strict ? ComparableInterface::IS_IDENTICAL_TO : ComparableInterface::IS_SAME_AS;
 
         foreach ($this->toArray() as $key => $element) {
-            if ($needle->$comparisonMethod($element)) {
+            if ($needle->compareTo($comparisonMethod, $element)) {
                 return $key;
             }
         }
@@ -37,6 +37,18 @@ abstract class AbstractComparableCollection extends AbstractCollection implement
     public function contains(ComparableInterface $needle, bool $strict = false): bool
     {
         return false !== $this->search($needle, $strict);
+    }
+
+    public function compareTo(int $comparisonMethod, ComparableInterface $element): bool
+    {
+        switch ($comparisonMethod) {
+            case ComparableInterface::IS_SAME_AS:
+                return $this->isSameAs($element);
+            case ComparableInterface::IS_IDENTICAL_TO:
+                return $this->isIdenticalTo($element);
+            default:
+                throw new \InvalidArgumentException('Unknown comparison method provided.');
+        }
     }
 
     public function isSameAs(ComparableInterface $collection): bool
