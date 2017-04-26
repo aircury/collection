@@ -107,6 +107,20 @@ abstract class AbstractCollection implements CollectionInterface
         return $this->elements;
     }
 
+
+    public function toValuesArray(): array
+    {
+        return array_values($this->elements);
+    }
+
+    /**
+     * @return int[]|string[]
+     */
+    public function toKeysArray(): array
+    {
+        return array_keys($this->elements);
+    }
+
     public function isEmpty(): bool
     {
         return empty($this->elements);
@@ -159,13 +173,30 @@ abstract class AbstractCollection implements CollectionInterface
      */
     public function mergeCollection(AbstractCollection $collection): void
     {
-        $count = $collection->count();
-
-        if (0 === $count) {
+        if ($collection->isEmpty()) {
             return;
         }
 
         $this->elements = array_merge($this->elements, $collection->getElements());
+
+        $this->evaluateIfItIsAssociative();
+    }
+
+    public function mergeCollections(AbstractCollection ...$collections): void
+    {
+        $arguments = [];
+
+        foreach ($collections as $collection) {
+            if (!$collection->isEmpty()) {
+                $arguments[] = $collection->getElements();
+            }
+        }
+
+        if (empty($arguments)) {
+            return;
+        }
+
+        $this->elements = array_merge($this->elements, ...$arguments);
 
         $this->evaluateIfItIsAssociative();
     }

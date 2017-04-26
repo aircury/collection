@@ -24,6 +24,14 @@ class CarCollection extends AbstractCollection
         return $this->getElements();
     }
 
+    /**
+     * @return Car[]
+     */
+    public function toValuesArray(): array
+    {
+        return parent::toValuesArray();
+    }
+
     public function first(): Car
     {
         return $this->doGetFirst();

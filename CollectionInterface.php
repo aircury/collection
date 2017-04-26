@@ -52,6 +52,13 @@ interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
     public function mergeCollection(AbstractCollection $collection): void;
 
     /**
+     * Merges many Collection of elements to this Collection
+     *
+     * @param AbstractCollection[] ...$collections
+     */
+    public function mergeCollections(AbstractCollection ...$collections): void;
+
+    /**
      * Appends elements at the end of the collection, but it cannot overwrite existing elements, unless is non-associative
      *
      * @param array $elements
