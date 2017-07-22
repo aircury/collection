@@ -107,7 +107,6 @@ abstract class AbstractCollection implements CollectionInterface
         return $this->elements;
     }
 
-
     public function toValuesArray(): array
     {
         return array_values($this->elements);
@@ -214,7 +213,9 @@ abstract class AbstractCollection implements CollectionInterface
 
         if ($this->isAssociative || 0 === count($this->elements)) {
             if (0 !== count(array_intersect_key($this->elements, $elements))) {
-                throw ProtectedKeyException::overwritingKeys(array_keys(array_intersect_key($this->elements, $elements)));
+                throw ProtectedKeyException::overwritingKeys(
+                    array_keys(array_intersect_key($this->elements, $elements))
+                );
             }
         } else {
             $keys      = array_keys($elements);
@@ -225,7 +226,9 @@ abstract class AbstractCollection implements CollectionInterface
                 $keys !== ($range = range($thisCount, $thisCount + $count - 1)) &&
                 !$this->isSameButOutOfOrder($keys, $range)
             ) {
-                throw ProtectedKeyException::overwritingKeys(array_keys(array_intersect_key($this->elements, $elements)));
+                throw ProtectedKeyException::overwritingKeys(
+                    array_keys(array_intersect_key($this->elements, $elements))
+                );
             }
         }
 
@@ -252,6 +255,7 @@ abstract class AbstractCollection implements CollectionInterface
     public function prependCollection(AbstractCollection $collection): void
     {
         $collection->appendCollection($this);
+
         $this->elements = $collection->toArray();
     }
 

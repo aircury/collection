@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Aircury\Collection;
 
@@ -12,7 +12,7 @@ class IntegerCollection extends AbstractIntegerCollection
     /**
      * @return int[]
      */
-    function toArray(): array
+    public function toArray(): array
     {
         return $this->getElements();
     }

@@ -1,10 +1,10 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Aircury\Collection;
 
 abstract class AbstractIntegerCollection extends AbstractScalarTypeCollection
 {
-    function getType(): string
+    public function getType(): string
     {
         return 'integer';
     }

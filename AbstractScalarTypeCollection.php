@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Aircury\Collection;
 
@@ -18,7 +18,7 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
     private $type;
 
     /**
-     * @var
+     * @var bool[]
      */
     private $nullsAllowed;
 
@@ -41,7 +41,7 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
      *
      * @return string
      */
-    abstract function getType(): string;
+    abstract public function getType(): string;
 
     protected function areNullsAllowed(): bool
     {
@@ -69,8 +69,8 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         }
 
         null === $offset
-            ? $this->elements[] = $element
-            : $this->elements[$offset] = $element;
+            ? ($this->elements[] = $element)
+            : ($this->elements[$offset] = $element);
     }
 
     public function offsetUnset($offset): void
@@ -78,7 +78,7 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         unset($this->elements[$offset]);
     }
 
-    abstract function toArray(): array;
+    abstract public function toArray(): array;
 
     protected function getElements(): array
     {

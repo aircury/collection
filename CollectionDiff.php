@@ -4,8 +4,8 @@ namespace Aircury\Collection;
 
 class CollectionDiff
 {
-    const SOURCE = 0;
-    const ADDED = 1;
+    const SOURCE  = 0;
+    const ADDED   = 1;
     const REMOVED = 2;
     const CHANGED = 3;
 
@@ -79,7 +79,9 @@ class CollectionDiff
 
                         $this->changes[$key] = [
                             self::CHANGED,
-                            null === $recordChange ? $element : $recordChange(self::CHANGED, $key, $element, $fromElements[$key]),
+                            null === $recordChange
+                                ? $element
+                                : $recordChange(self::CHANGED, $key, $element, $fromElements[$key]),
                         ];
 
                         unset($fromElements[$key]);
@@ -135,8 +137,10 @@ class CollectionDiff
      *
      * @return ComparableCollectionInterface
      */
-    public function apply(ComparableCollectionInterface $sourceCollection, bool $keepOriginalOrder = false): ComparableCollectionInterface
-    {
+    public function apply(
+        ComparableCollectionInterface $sourceCollection,
+        bool $keepOriginalOrder = false
+    ): ComparableCollectionInterface {
         $collectionClass = get_class($sourceCollection);
         $source          = $sourceCollection->toArray();
         $array           = [];

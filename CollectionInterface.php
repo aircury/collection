@@ -2,11 +2,7 @@
 
 namespace Aircury\Collection;
 
-use ArrayAccess;
-use Countable;
-use IteratorAggregate;
-
-interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
+interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * The canonical class name that all elements on this collection are expected to be
