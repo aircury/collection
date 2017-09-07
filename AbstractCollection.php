@@ -285,4 +285,34 @@ abstract class AbstractCollection implements CollectionInterface
 
         return $this;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeElement($element): bool
+    {
+        $key = array_search($element, $this->elements, true);
+
+        if ($key !== false) {
+            unset($this->elements[$key]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeElements(\Traversable $elements): bool
+    {
+        $return = false;
+
+        foreach ($elements as $element) {
+            $return = $this->removeElement($element) && $return;
+        }
+
+        return $return;
+    }
 }

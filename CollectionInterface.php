@@ -81,4 +81,20 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
      * @return $this|static
      */
     public function filter(callable $filter, bool $returnNewCollection = true);
+
+    /**
+     * Removes the specified element from the collection, if it is found.
+     *
+     * @param mixed $element The element to remove.
+     *
+     * @return bool TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeElement($element): bool;
+
+    /**
+     * @param \Traversable $elements
+     *
+     * @return bool TRUE if this collection contained ALL the specified elements, FALSE otherwise.
+     */
+    public function removeElements(\Traversable $elements): bool;
 }
