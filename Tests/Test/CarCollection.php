@@ -6,7 +6,7 @@ use Aircury\Collection\AbstractCollection;
 
 class CarCollection extends AbstractCollection
 {
-    function getClass(): string
+    public function getClass(): string
     {
         return Car::class;
     }
@@ -19,7 +19,7 @@ class CarCollection extends AbstractCollection
     /**
      * @return Car[]
      */
-    function toArray(): array
+    public function toArray(): array
     {
         return $this->getElements();
     }
