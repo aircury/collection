@@ -1,5 +1,6 @@
 # IDE
 /.idea/*
+Collection.iml
 
 # Dependencies
 /vendor/
