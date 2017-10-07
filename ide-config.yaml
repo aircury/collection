@@ -1,0 +1,41 @@
+modules:
+    collection:
+        root: $PROJECT_DIR$
+        excluded:
+            - .idea
+servers:
+    aircury:
+        host: aircury.local
+        mappings:
+            $PROJECT_DIR$: /var/www/aircury/src/collection
+deployment:
+    collection:
+        type: SFTP
+        host: aircury.local
+        url: http://aircury.local
+        port: 2222
+        private_key: env(PRIVATE_KEY_PATH)
+        mappings:
+            $PROJECT_DIR$: /var/www/aircury/src/collection
+php:
+    language_level: 7.1
+    xdebug:
+        port: env(XDEBUG_REMOTE_PORT)
+    interpreters:
+        Remote PHP - collection:
+            type: SSH
+            username: www-data
+            host: aircury.local
+            port: 2222
+            php_path: /usr/local/bin/php
+            private_key: env(PRIVATE_KEY_PATH)
+            phpunit:
+                configuration: phpunit.xml.dist
+                loader: vendor/autoload.php
+vcs:
+    $PROJECT_DIR$/../..: Git
+symfony: ~
+run:
+    tests:
+        type: PHPUnit
+        folder: tests
