@@ -1,8 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Aircury\Collection;
+namespace Tests\Aircury\Collection;
 
-use Aircury\Collection\Test\Car;
+use Aircury\Collection\StringOrNullCollection;
+use Tests\Aircury\Collection\Test\Car;
 use PHPUnit\Framework\TestCase;
 
 class StringOrNullCollectionTest extends TestCase
