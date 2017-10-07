@@ -1,10 +1,10 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
-namespace Tests\Aircury\Collection;
+namespace Aircury\Collection\Tests;
 
-use Tests\Aircury\Collection\Test\Car;
-use Tests\Aircury\Collection\Test\CarCollection;
-use Tests\Aircury\Collection\Test\Human;
+use Aircury\Collection\Tests\Fixtures\Car;
+use Aircury\Collection\Tests\Fixtures\CarCollection;
+use Aircury\Collection\Tests\Fixtures\Human;
 use PHPUnit\Framework\TestCase;
 
 class ModelTest extends TestCase

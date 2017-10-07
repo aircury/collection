@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Aircury\Collection;
+namespace Aircury\Collection\Tests;
 
 use Aircury\Collection\CollectionDiff;
-use Tests\Aircury\Collection\Test\ComparableCar;
-use Tests\Aircury\Collection\Test\ComparableCarCollection;
+use Aircury\Collection\Tests\Fixtures\ComparableCar;
+use Aircury\Collection\Tests\Fixtures\ComparableCarCollection;
 use PHPUnit\Framework\TestCase;
 
 class CollectionDiffTest extends TestCase

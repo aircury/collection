@@ -1,6 +1,6 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
-namespace Tests\Aircury\Collection\Test;
+namespace Aircury\Collection\Tests\Fixtures;
 
 use Aircury\Collection\AbstractCollection;
 

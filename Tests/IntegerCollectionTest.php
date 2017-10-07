@@ -1,9 +1,9 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
-namespace Tests\Aircury\Collection;
+namespace Aircury\Collection\Tests;
 
 use Aircury\Collection\IntegerCollection;
-use Tests\Aircury\Collection\Test\Car;
+use Aircury\Collection\Tests\Fixtures\Car;
 use PHPUnit\Framework\TestCase;
 
 class IntegerCollectionTest extends TestCase
