@@ -36,6 +36,6 @@ vcs:
     $PROJECT_DIR$/../..: Git
 symfony: ~
 run:
-    tests:
+    Tests:
         type: PHPUnit
-        folder: tests
+        folder: Tests
