@@ -3,6 +3,8 @@ modules:
         root: $PROJECT_DIR$
         excluded:
             - .idea
+        tests:
+            - Tests
 servers:
     aircury:
         host: aircury.local
