@@ -3,6 +3,8 @@ modules:
         root: $PROJECT_DIR$
         excluded:
             - .idea
+        sources:
+            - .
         tests:
             - Tests
 servers:
