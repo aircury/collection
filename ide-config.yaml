@@ -17,6 +17,7 @@ deployment:
         private_key: env(PRIVATE_KEY_PATH)
         mappings:
             $PROJECT_DIR$: /var/www/aircury/src/collection
+            $PROJECT_DIR$/../..: /var/www/aircury
 php:
     language_level: 7.1
     xdebug:
@@ -39,3 +40,10 @@ run:
     Tests:
         type: PHPUnit
         folder: Tests
+    aircury:configure:ide collection:
+        type: PHP Console
+        script: ../../bin/console
+        parameters: aircury:configure:ide src/Collection -v
+        environment:
+            PRIVATE_KEY_PATH: env(PRIVATE_KEY_PATH)
+            XDEBUG_REMOTE_PORT: env(XDEBUG_REMOTE_PORT)
