@@ -315,4 +315,18 @@ abstract class AbstractCollection implements CollectionInterface
 
         return $return;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function debug(): array
+    {
+        $return = [];
+
+        foreach ($this->toArray() as $key => $element) {
+            $return[$key] = (string) $element;
+        }
+
+        return $return;
+    }
 }

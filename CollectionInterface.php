@@ -97,4 +97,9 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
      * @return bool TRUE if this collection contained ALL the specified elements, FALSE otherwise.
      */
     public function removeElements(\Traversable $elements): bool;
+
+    /**
+     * @return string[] An array with the same keys, but __toString called upon each element
+     */
+    public function debug(): array;
 }
