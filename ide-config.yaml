@@ -34,7 +34,7 @@ php:
             username: www-data
             host: aircury.local
             port: 2222
-            php_path: /usr/local/bin/php
+            php_path: /usr/bin/php
             private_key: env(PRIVATE_KEY_PATH)
             phpunit:
                 configuration: phpunit.xml.dist
