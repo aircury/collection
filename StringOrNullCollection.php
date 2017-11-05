@@ -15,7 +15,7 @@ class StringOrNullCollection extends AbstractStringCollection
     }
 
     /**
-     * @return string[]|null[]
+     * @return null[]|string[]
      */
     public function toArray(): array
     {

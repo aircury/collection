@@ -86,6 +86,7 @@ class StringCollectionTest extends TestCase
     public function testRetrieveByInvalidKey(): void
     {
         $strings = new StringCollection(['A' => 'a']);
+
         $strings['X'];
     }
 

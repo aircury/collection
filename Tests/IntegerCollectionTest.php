@@ -86,6 +86,7 @@ class IntegerCollectionTest extends TestCase
     public function testRetrieveByInvalidKey(): void
     {
         $integers = new IntegerCollection(['A' => 3]);
+
         $integers['X'];
     }
 

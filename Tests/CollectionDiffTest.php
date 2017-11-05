@@ -120,7 +120,7 @@ class CollectionDiffTest extends TestCase
         $this->assertEquals($noCars, $carsAfterApplied);
 
         $c         = new ComparableCar('Mercedes');
-        $otherCars = new ComparableCarCollection([$c, $a, $b,]);
+        $otherCars = new ComparableCarCollection([$c, $a, $b]);
 
         $carDiff = new CollectionDiff($cars, $otherCars);
 

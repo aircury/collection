@@ -6,7 +6,7 @@ use Aircury\Collection\AbstractComparableCollection;
 
 class ComparableCarCollection extends AbstractComparableCollection
 {
-    function getClass(): string
+    public function getClass(): string
     {
         return ComparableCar::class;
     }
@@ -19,7 +19,7 @@ class ComparableCarCollection extends AbstractComparableCollection
     /**
      * @return ComparableCar[]
      */
-    function toArray(): array
+    public function toArray(): array
     {
         return $this->getElements();
     }

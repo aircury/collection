@@ -101,6 +101,7 @@ class ModelTest extends TestCase
     public function testRetrieveByInvalidKey(): void
     {
         $cars = new CarCollection(['A' => new Car('Porsche')]);
+
         $cars['X'];
     }
 

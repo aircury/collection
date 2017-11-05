@@ -89,6 +89,7 @@ class IntegerOrNullCollectionTest extends TestCase
     public function testRetrieveByInvalidKey(): void
     {
         $integers = new IntegerOrNullCollection(['A' => null]);
+
         $integers['X'];
     }
 

@@ -89,6 +89,7 @@ class StringOrNullCollectionTest extends TestCase
     public function testRetrieveByInvalidKey(): void
     {
         $strings = new StringOrNullCollection(['A' => 'a']);
+
         $strings['X'];
     }
 
