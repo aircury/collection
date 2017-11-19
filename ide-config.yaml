@@ -43,7 +43,7 @@ php:
                 loader: vendor/autoload.php
 vcs:
     $PROJECT_DIR$/../..: Git
-symfony: ~
+symfony: []
 run:
     Tests:
         type: PHPUnit
