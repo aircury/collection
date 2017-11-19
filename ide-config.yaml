@@ -9,6 +9,8 @@ modules:
             - Tests
         libraries:
             - vendor
+composer:
+    synchronize: true
 servers:
     aircury:
         host: aircury.local
