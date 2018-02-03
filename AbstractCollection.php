@@ -135,6 +135,11 @@ abstract class AbstractCollection implements CollectionInterface
         return reset($this->elements);
     }
 
+    public function doGetLast()
+    {
+        return end($this->elements);
+    }
+
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->elements);
