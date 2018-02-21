@@ -334,4 +334,12 @@ abstract class AbstractCollection implements CollectionInterface
 
         return $return;
     }
+
+    /**
+     * @return mixed
+     */
+    public function pop()
+    {
+        return array_pop($this->elements);
+    }
 }
