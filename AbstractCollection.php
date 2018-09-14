@@ -135,6 +135,11 @@ abstract class AbstractCollection implements CollectionInterface
         return reset($this->elements);
     }
 
+    public function last()
+    {
+        return $this->doGetLast();
+    }
+
     public function doGetLast()
     {
         return end($this->elements);
