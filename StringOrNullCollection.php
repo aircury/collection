@@ -2,28 +2,17 @@
 
 namespace Aircury\Collection;
 
+/**
+ * @method void            offsetSet($offset, ?string $element)
+ * @method string|null     offsetGet($offset)
+ * @method string[]|null[] toArray()
+ * @method string|null     first()
+ * @method string|null     last()
+ */
 class StringOrNullCollection extends AbstractStringCollection
 {
     protected function areNullsAllowed(): bool
     {
         return true;
-    }
-
-    public function offsetGet($offset): ?string
-    {
-        return $this->doOffsetGet($offset);
-    }
-
-    /**
-     * @return null[]|string[]
-     */
-    public function toArray(): array
-    {
-        return $this->getElements();
-    }
-
-    public function first(): ?string
-    {
-        return $this->doGetFirst();
     }
 }

@@ -2,23 +2,13 @@
 
 namespace Aircury\Collection;
 
+/**
+ * @method void     offsetSet($offset, int $element)
+ * @method int      offsetGet($offset)
+ * @method int[]    toArray()
+ * @method int|null first()
+ * @method int|null last()
+ */
 class IntegerCollection extends AbstractIntegerCollection
 {
-    public function offsetGet($offset): int
-    {
-        return $this->doOffsetGet($offset);
-    }
-
-    /**
-     * @return int[]
-     */
-    public function toArray(): array
-    {
-        return $this->getElements();
-    }
-
-    public function first(): int
-    {
-        return $this->doGetFirst();
-    }
 }

@@ -53,7 +53,7 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         return isset($this->elements[$offset]) || array_key_exists($offset, $this->elements);
     }
 
-    protected function doOffsetGet($offset)
+    public function offsetGet($offset)
     {
         if (!isset($this->elements[$offset])) {
             throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
@@ -78,23 +78,24 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         unset($this->elements[$offset]);
     }
 
-    abstract public function toArray(): array;
-
-    protected function getElements(): array
+    public function toArray(): array
     {
         return $this->elements;
     }
 
     public function count(): int
     {
-        return count($this->elements);
+        return \count($this->elements);
     }
 
-    abstract public function first();
-
-    public function doGetFirst()
+    public function first()
     {
         return reset($this->elements);
+    }
+
+    public function last()
+    {
+        return end($this->elements);
     }
 
     public function getIterator(): \ArrayIterator

@@ -2,28 +2,17 @@
 
 namespace Aircury\Collection;
 
+/**
+ * @method void         offsetSet($offset, ?int $element)
+ * @method int|null     offsetGet($offset)
+ * @method int[]|null[] toArray()
+ * @method int|null     first()
+ * @method int|null     last()
+ */
 class IntegerOrNullCollection extends AbstractIntegerCollection
 {
     protected function areNullsAllowed(): bool
     {
         return true;
-    }
-
-    public function offsetGet($offset): ?int
-    {
-        return $this->doOffsetGet($offset);
-    }
-
-    /**
-     * @return int[]|null[]
-     */
-    public function toArray(): array
-    {
-        return $this->getElements();
-    }
-
-    public function first(): ?int
-    {
-        return $this->doGetFirst();
     }
 }

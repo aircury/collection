@@ -2,23 +2,13 @@
 
 namespace Aircury\Collection;
 
+/**
+ * @method void        offsetSet($offset, string $element)
+ * @method string      offsetGet($offset)
+ * @method string[]    toArray()
+ * @method string|null first()
+ * @method string|null last()
+ */
 class StringCollection extends AbstractStringCollection
 {
-    public function offsetGet($offset): string
-    {
-        return $this->doOffsetGet($offset);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function toArray(): array
-    {
-        return $this->getElements();
-    }
-
-    public function first(): string
-    {
-        return $this->doGetFirst();
-    }
 }

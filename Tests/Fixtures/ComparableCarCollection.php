@@ -4,28 +4,21 @@ namespace Aircury\Collection\Tests\Fixtures;
 
 use Aircury\Collection\AbstractComparableCollection;
 
+/**
+ * @method void                    offsetSet($offset, ComparableCar $element)
+ * @method ComparableCar           offsetGet($offset)
+ * @method ComparableCar[]         toArray()
+ * @method ComparableCar[]         toValuesArray()
+ * @method ComparableCar|null      first()
+ * @method ComparableCar|null      last()
+ * @method bool                    removeElement(ComparableCar $element)
+ * @method ComparableCarCollection filter(callable $filter, bool $returnNewCollection = true)
+ * @method ComparableCar|null      pop()
+ */
 class ComparableCarCollection extends AbstractComparableCollection
 {
     public function getClass(): string
     {
         return ComparableCar::class;
-    }
-
-    public function offsetGet($offset): ComparableCar
-    {
-        return $this->doOffsetGet($offset);
-    }
-
-    /**
-     * @return ComparableCar[]
-     */
-    public function toArray(): array
-    {
-        return $this->getElements();
-    }
-
-    public function first(): ComparableCar
-    {
-        return $this->doGetFirst();
     }
 }

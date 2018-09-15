@@ -7,7 +7,7 @@ use Aircury\Collection\Tests\Fixtures\CarCollection;
 use Aircury\Collection\Tests\Fixtures\Human;
 use PHPUnit\Framework\TestCase;
 
-class ModelTest extends TestCase
+class CarCollectionTest extends TestCase
 {
     public function testBasicUsage(): void
     {

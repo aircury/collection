@@ -4,36 +4,21 @@ namespace Aircury\Collection\Tests\Fixtures;
 
 use Aircury\Collection\AbstractCollection;
 
+/**
+ * @method void          offsetSet($offset, Car $element)
+ * @method Car           offsetGet($offset)
+ * @method Car[]         toArray()
+ * @method Car[]         toValuesArray()
+ * @method Car|null      first()
+ * @method Car|null      last()
+ * @method bool          removeElement(Car $element)
+ * @method CarCollection filter(callable $filter, bool $returnNewCollection = true)
+ * @method Car|null      pop()
+ */
 class CarCollection extends AbstractCollection
 {
     public function getClass(): string
     {
         return Car::class;
-    }
-
-    public function offsetGet($offset): Car
-    {
-        return $this->doOffsetGet($offset);
-    }
-
-    /**
-     * @return Car[]
-     */
-    public function toArray(): array
-    {
-        return $this->getElements();
-    }
-
-    /**
-     * @return Car[]
-     */
-    public function toValuesArray(): array
-    {
-        return parent::toValuesArray();
-    }
-
-    public function first(): Car
-    {
-        return $this->doGetFirst();
     }
 }

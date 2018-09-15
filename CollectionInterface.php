@@ -27,8 +27,6 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
 
     public function first();
 
-    public function doGetFirst();
-
     public function last();
 
     public function getIterator(): \ArrayIterator;

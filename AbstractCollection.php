@@ -41,7 +41,7 @@ abstract class AbstractCollection implements CollectionInterface
     private function evaluateIfItIsAssociative(): void
     {
         if (
-            0 !== ($count = count($this->elements)) &&
+            0 !== ($count = \count($this->elements)) &&
             ($keys = array_keys($this->elements)) !== ($range = range(0, $count - 1)) &&
             !$this->isSameButOutOfOrder($keys, $range)
         ) {
@@ -62,7 +62,7 @@ abstract class AbstractCollection implements CollectionInterface
         return array_key_exists($offset, $this->elements);
     }
 
-    protected function doOffsetGet($offset)
+    public function offsetGet($offset)
     {
         if (!isset($this->elements[$offset])) {
             throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
@@ -82,7 +82,7 @@ abstract class AbstractCollection implements CollectionInterface
         } else {
             $this->elements[$offset] = $element;
 
-            if (!$this->isAssociative && (!is_int($offset) || $offset < 0 || $offset > count($this->elements))) {
+            if (!$this->isAssociative && (!\is_int($offset) || $offset < 0 || $offset > \count($this->elements))) {
                 $this->isAssociative = true;
             }
         }
@@ -90,7 +90,7 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function offsetUnset($offset): void
     {
-        if (!$this->isAssociative && (is_int($offset) && $offset < count($this->elements) - 1)) {
+        if (!$this->isAssociative && (\is_int($offset) && $offset < \count($this->elements) - 1)) {
             $this->isAssociative = true;
         }
 
@@ -102,7 +102,7 @@ abstract class AbstractCollection implements CollectionInterface
         $this->elements = $elements;
     }
 
-    protected function getElements(): array
+    public function toArray(): array
     {
         return $this->elements;
     }
@@ -127,20 +127,15 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function count(): int
     {
-        return count($this->elements);
+        return \count($this->elements);
     }
 
-    public function doGetFirst()
+    public function first()
     {
         return reset($this->elements);
     }
 
     public function last()
-    {
-        return $this->doGetLast();
-    }
-
-    public function doGetLast()
     {
         return end($this->elements);
     }
@@ -160,7 +155,7 @@ abstract class AbstractCollection implements CollectionInterface
      */
     public function merge(array $elements): void
     {
-        $count = count($elements);
+        $count = \count($elements);
 
         if (0 === $count) {
             return;
@@ -186,7 +181,7 @@ abstract class AbstractCollection implements CollectionInterface
             return;
         }
 
-        $this->elements = array_merge($this->elements, $collection->getElements());
+        $this->elements = array_merge($this->elements, $collection->toArray());
 
         $this->evaluateIfItIsAssociative();
     }
@@ -197,7 +192,7 @@ abstract class AbstractCollection implements CollectionInterface
 
         foreach ($collections as $collection) {
             if (!$collection->isEmpty()) {
-                $arguments[] = $collection->getElements();
+                $arguments[] = $collection->toArray();
             }
         }
 
@@ -215,21 +210,21 @@ abstract class AbstractCollection implements CollectionInterface
      */
     public function append(array $elements): void
     {
-        $count = count($elements);
+        $count = \count($elements);
 
         if (0 === $count) {
             return;
         }
 
-        if ($this->isAssociative || 0 === count($this->elements)) {
-            if (0 !== count(array_intersect_key($this->elements, $elements))) {
+        if ($this->isAssociative || 0 === \count($this->elements)) {
+            if (0 !== \count(array_intersect_key($this->elements, $elements))) {
                 throw ProtectedKeyException::overwritingKeys(
                     array_keys(array_intersect_key($this->elements, $elements))
                 );
             }
         } else {
             $keys      = array_keys($elements);
-            $thisCount = count($this->elements);
+            $thisCount = \count($this->elements);
 
             if (
                 $keys !== range(0, $count - 1) &&
@@ -327,6 +322,14 @@ abstract class AbstractCollection implements CollectionInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function pop()
+    {
+        return array_pop($this->elements);
+    }
+
+    /**
      * @inheritdoc
      */
     public function debug(): array
@@ -338,13 +341,5 @@ abstract class AbstractCollection implements CollectionInterface
         }
 
         return $return;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function pop()
-    {
-        return array_pop($this->elements);
     }
 }
