@@ -38,8 +38,6 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
 
     /**
      * The PHP type all elements on this collection are expected to be ("boolean", "integer", "double", "string", "array", "object", "resource" or "NULL")
-     *
-     * @return string
      */
     abstract public function getType(): string;
 

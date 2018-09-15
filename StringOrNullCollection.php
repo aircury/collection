@@ -5,7 +5,7 @@ namespace Aircury\Collection;
 /**
  * @method void            offsetSet($offset, ?string $element)
  * @method string|null     offsetGet($offset)
- * @method string[]|null[] toArray()
+ * @method null[]|string[] toArray()
  * @method string|null     first()
  * @method string|null     last()
  */

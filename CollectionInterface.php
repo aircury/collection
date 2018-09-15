@@ -6,8 +6,6 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
 {
     /**
      * The canonical class name that all elements on this collection are expected to be
-     *
-     * @return string
      */
     public function getClass(): string;
 
@@ -35,36 +33,26 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
 
     /**
      * Merges an array of elements to this Collection
-     *
-     * @param array $elements
      */
     public function merge(array $elements): void;
 
     /**
      * Merges a Collection of elements to this Collection
-     *
-     * @param AbstractCollection $collection
      */
     public function mergeCollection(AbstractCollection $collection): void;
 
     /**
      * Merges many Collection of elements to this Collection
-     *
-     * @param AbstractCollection[] ...$collections
      */
     public function mergeCollections(AbstractCollection ...$collections): void;
 
     /**
      * Appends elements at the end of the collection, but it cannot overwrite existing elements, unless is non-associative
-     *
-     * @param array $elements
      */
     public function append(array $elements): void;
 
     /**
      * Appends a collection at the end of this collection, but it cannot overwrite existing elements, unless is non-associative
-     *
-     * @param AbstractCollection $collection
      */
     public function appendCollection(AbstractCollection $collection): void;
 
@@ -75,8 +63,7 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
     public function usort(callable $sort): void;
 
     /**
-     * @param callable $filter
-     * @param bool     $returnNewCollection Return new collection or change this one
+     * @param bool $returnNewCollection Return new collection or change this one
      *
      * @return $this|static
      */
@@ -92,8 +79,6 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
     public function removeElement($element): bool;
 
     /**
-     * @param \Traversable $elements
-     *
      * @return bool TRUE if this collection contained ALL the specified elements, FALSE otherwise.
      */
     public function removeElements(\Traversable $elements): bool;
