@@ -48,10 +48,10 @@ run:
     Tests:
         type: PHPUnit
         folder: Tests
-    aircury:configure:ide collection:
+    configure-ide collection:
         type: PHP Console
-        script: ../../bin/console
-        parameters: aircury:configure:ide src/Collection -v
+        script: ../../bin/configure-ide
+        parameters: ../src/Collection
         environment:
             PRIVATE_KEY_PATH: env(PRIVATE_KEY_PATH)
             XDEBUG_REMOTE_PORT: env(XDEBUG_REMOTE_PORT)
