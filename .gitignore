@@ -4,3 +4,6 @@ Collection.iml
 
 # Dependencies
 /vendor/
+
+# Binaries
+/bin/*
