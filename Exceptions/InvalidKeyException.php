@@ -16,7 +16,7 @@ class InvalidKeyException extends \LogicException
             sprintf(
                 'The key \'%s\' does not exist on the collection.%s',
                 $offset,
-                0 !== count($validOffsets)
+                0 !== \count($validOffsets)
                     ? sprintf(' The valid keys are: \'%s\'', implode('\', \'', $validOffsets))
                     : ''
             )
