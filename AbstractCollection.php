@@ -330,6 +330,14 @@ abstract class AbstractCollection implements CollectionInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function shift()
+    {
+        return array_shift($this->elements);
+    }
+
+    /**
      * @inheritdoc
      */
     public function debug(): array

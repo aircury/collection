@@ -14,6 +14,7 @@ use Aircury\Collection\AbstractCollection;
  * @method bool          removeElement(Car $element)
  * @method CarCollection filter(callable $filter, bool $returnNewCollection = true)
  * @method Car|null      pop()
+ * @method Car|null      shift()
  */
 class CarCollection extends AbstractCollection
 {

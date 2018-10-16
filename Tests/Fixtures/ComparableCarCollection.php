@@ -14,6 +14,7 @@ use Aircury\Collection\AbstractComparableCollection;
  * @method bool                    removeElement(ComparableCar $element)
  * @method ComparableCarCollection filter(callable $filter, bool $returnNewCollection = true)
  * @method ComparableCar|null      pop()
+ * @method ComparableCar|null      shift()
  */
 class ComparableCarCollection extends AbstractComparableCollection
 {
