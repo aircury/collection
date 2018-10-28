@@ -49,14 +49,14 @@ class StringOrNullCollectionTest extends TestCase
      */
     public function testInvalidElementAddedToCollection(): void
     {
-        $strings   = new StringOrNullCollection();
+        $strings = new StringOrNullCollection();
         $strings[] = 'a';
         $strings[] = 3;
     }
 
     public function testNullElementAddedToCollection(): void
     {
-        $strings   = new StringOrNullCollection();
+        $strings = new StringOrNullCollection();
         $strings[] = 'a';
         $strings[] = null;
 
@@ -95,7 +95,7 @@ class StringOrNullCollectionTest extends TestCase
 
     public function testIterator(): void
     {
-        $a       = 'a';
+        $a = 'a';
         $strings = new StringOrNullCollection([$a]);
 
         foreach ($strings as $key => $value) {

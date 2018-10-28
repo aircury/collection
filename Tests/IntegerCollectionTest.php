@@ -49,7 +49,7 @@ class IntegerCollectionTest extends TestCase
      */
     public function testInvalidElementAddedToCollection(): void
     {
-        $integers   = new IntegerCollection();
+        $integers = new IntegerCollection();
         $integers[] = 3;
         $integers[] = 'a';
     }
@@ -59,7 +59,7 @@ class IntegerCollectionTest extends TestCase
      */
     public function testNullElementAddedToCollection(): void
     {
-        $integers   = new IntegerCollection();
+        $integers = new IntegerCollection();
         $integers[] = 3;
         $integers[] = null;
     }
@@ -92,7 +92,7 @@ class IntegerCollectionTest extends TestCase
 
     public function testIterator(): void
     {
-        $a        = 3;
+        $a = 3;
         $integers = new IntegerCollection([$a]);
 
         foreach ($integers as $key => $value) {

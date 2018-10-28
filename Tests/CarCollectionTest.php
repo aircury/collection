@@ -43,7 +43,7 @@ class CarCollectionTest extends TestCase
         $cars = new CarCollection();
 
         $cars['x'] = $car1;
-        $cars[42]  = $car2;
+        $cars[42] = $car2;
 
         $this->assertCount(2, $cars);
         $this->assertEquals('Renault', $cars['x']->getMake());
@@ -51,7 +51,7 @@ class CarCollectionTest extends TestCase
         $this->assertEquals(
             [
                 'x' => $car1,
-                42  => $car2,
+                42 => $car2,
             ],
             $cars->toArray()
         );
@@ -74,7 +74,7 @@ class CarCollectionTest extends TestCase
      */
     public function testInvalidElementAddedToCollection(): void
     {
-        $cars   = new CarCollection();
+        $cars = new CarCollection();
         $cars[] = new Car();
         $cars[] = new Human();
     }
@@ -107,7 +107,7 @@ class CarCollectionTest extends TestCase
 
     public function testIterator(): void
     {
-        $a    = new Car('Porsche');
+        $a = new Car('Porsche');
         $cars = new CarCollection([$a]);
 
         foreach ($cars as $key => $value) {
@@ -142,7 +142,7 @@ class CarCollectionTest extends TestCase
 
         $this->assertTrue($cars->isAssociative());
 
-        $cars  = new CarCollection([$a, $a, $b, $b]);
+        $cars = new CarCollection([$a, $a, $b, $b]);
         $cars2 = clone $cars;
 
         $this->assertFalse($cars->isAssociative());
@@ -170,8 +170,8 @@ class CarCollectionTest extends TestCase
 
     public function testMerge(): void
     {
-        $a    = new Car('Porsche');
-        $b    = new Car('BMW');
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
         $cars = new CarCollection([$a]);
 
         $cars->merge([$b]);
@@ -185,8 +185,8 @@ class CarCollectionTest extends TestCase
      */
     public function testInvalidMerge(): void
     {
-        $a    = new Car('Porsche');
-        $b    = new Human();
+        $a = new Car('Porsche');
+        $b = new Human();
         $cars = new CarCollection([$a]);
 
         $cars->merge([$b]);
@@ -194,8 +194,8 @@ class CarCollectionTest extends TestCase
 
     public function testAppend(): void
     {
-        $a    = new Car('Porsche');
-        $b    = new Car('BMW');
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
         $cars = new CarCollection([$a]);
 
         $cars->append([$b]);
@@ -213,8 +213,8 @@ class CarCollectionTest extends TestCase
      */
     public function testInvalidAppend(): void
     {
-        $a    = new Car('Porsche');
-        $b    = new Car('BMW');
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
         $cars = new CarCollection([1 => $a]);
 
         $cars->append([1 => $b]);
@@ -222,8 +222,8 @@ class CarCollectionTest extends TestCase
 
     public function testMergeCollection(): void
     {
-        $a    = new Car('Porsche');
-        $b    = new Car('BMW');
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
         $cars = new CarCollection([$a, $b]);
 
         $cars->mergeCollection($cars);
@@ -234,9 +234,9 @@ class CarCollectionTest extends TestCase
 
     public function testAppendCollection(): void
     {
-        $a     = new Car('Porsche');
-        $b     = new Car('BMW');
-        $cars  = new CarCollection([$a, $b]);
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $cars = new CarCollection([$a, $b]);
         $cars2 = new CarCollection([2 => $a, 3 => $b]);
 
         $cars->appendCollection($cars2);
@@ -247,16 +247,16 @@ class CarCollectionTest extends TestCase
 
     public function testAppendCollectionToEmpty(): void
     {
-        $a     = new Car('Porsche');
-        $b     = new Car('BMW');
-        $cars  = new CarCollection([$a, $b]);
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $cars = new CarCollection([$a, $b]);
         $empty = new CarCollection();
 
         $empty->appendCollection($cars);
 
         $this->assertCount(2, $empty);
 
-        $cars  = new CarCollection(['a' => $a, 'b' => $b]);
+        $cars = new CarCollection(['a' => $a, 'b' => $b]);
         $empty = new CarCollection();
 
         $empty->appendCollection($cars);

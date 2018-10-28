@@ -11,8 +11,8 @@ class CollectionDiffTest extends TestCase
 {
     public function testAssociativeDiff(): void
     {
-        $a    = new ComparableCar('Ford');
-        $b    = new ComparableCar('BMW');
+        $a = new ComparableCar('Ford');
+        $b = new ComparableCar('BMW');
         $cars = new ComparableCarCollection(
             [
                 'car1' => $a,
@@ -20,7 +20,7 @@ class CollectionDiffTest extends TestCase
             ]
         );
 
-        $noCars  = new ComparableCarCollection();
+        $noCars = new ComparableCarCollection();
         $carDiff = new CollectionDiff($noCars, $cars);
 
         $this->assertEquals(2, $carDiff->getChangesCount());
@@ -53,7 +53,7 @@ class CollectionDiffTest extends TestCase
         $this->assertCount(0, $carsAfterApplied);
         $this->assertEquals($noCars, $carsAfterApplied);
 
-        $c         = new ComparableCar('Mercedes');
+        $c = new ComparableCar('Mercedes');
         $otherCars = new ComparableCarCollection(
             [
                 'car1' => $c,
@@ -82,11 +82,11 @@ class CollectionDiffTest extends TestCase
 
     public function testSequentialDiff(): void
     {
-        $a    = new ComparableCar('Ford');
-        $b    = new ComparableCar('BMW');
+        $a = new ComparableCar('Ford');
+        $b = new ComparableCar('BMW');
         $cars = new ComparableCarCollection([$a, $b]);
 
-        $noCars  = new ComparableCarCollection();
+        $noCars = new ComparableCarCollection();
         $carDiff = new CollectionDiff($noCars, $cars);
 
         $this->assertEquals(2, $carDiff->getChangesCount());
@@ -119,7 +119,7 @@ class CollectionDiffTest extends TestCase
         $this->assertCount(0, $carsAfterApplied);
         $this->assertEquals($noCars, $carsAfterApplied);
 
-        $c         = new ComparableCar('Mercedes');
+        $c = new ComparableCar('Mercedes');
         $otherCars = new ComparableCarCollection([$c, $a, $b]);
 
         $carDiff = new CollectionDiff($cars, $otherCars);

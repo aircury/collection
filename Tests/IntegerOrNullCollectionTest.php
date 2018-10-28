@@ -49,14 +49,14 @@ class IntegerOrNullCollectionTest extends TestCase
      */
     public function testInvalidElementAddedToCollection(): void
     {
-        $integers   = new IntegerOrNullCollection();
+        $integers = new IntegerOrNullCollection();
         $integers[] = 'a';
         $integers[] = 3;
     }
 
     public function testNullElementAddedToCollection(): void
     {
-        $integers   = new IntegerOrNullCollection();
+        $integers = new IntegerOrNullCollection();
         $integers[] = 3;
         $integers[] = null;
 
@@ -95,7 +95,7 @@ class IntegerOrNullCollectionTest extends TestCase
 
     public function testIterator(): void
     {
-        $a        = 42;
+        $a = 42;
         $integers = new IntegerOrNullCollection([$a]);
 
         foreach ($integers as $key => $value) {

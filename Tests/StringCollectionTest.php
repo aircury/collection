@@ -49,7 +49,7 @@ class StringCollectionTest extends TestCase
      */
     public function testInvalidElementAddedToCollection(): void
     {
-        $strings   = new StringCollection();
+        $strings = new StringCollection();
         $strings[] = 'a';
         $strings[] = 3;
     }
@@ -59,7 +59,7 @@ class StringCollectionTest extends TestCase
      */
     public function testNullElementAddedToCollection(): void
     {
-        $strings   = new StringCollection();
+        $strings = new StringCollection();
         $strings[] = 'a';
         $strings[] = null;
     }
@@ -92,7 +92,7 @@ class StringCollectionTest extends TestCase
 
     public function testIterator(): void
     {
-        $a       = 'a';
+        $a = 'a';
         $strings = new StringCollection([$a]);
 
         foreach ($strings as $key => $value) {

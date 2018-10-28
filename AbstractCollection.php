@@ -223,7 +223,7 @@ abstract class AbstractCollection implements CollectionInterface
                 );
             }
         } else {
-            $keys      = array_keys($elements);
+            $keys = array_keys($elements);
             $thisCount = \count($this->elements);
 
             if (
@@ -251,7 +251,7 @@ abstract class AbstractCollection implements CollectionInterface
     public function prepend(array $elements): void
     {
         $currentElements = $this->elements;
-        $this->elements  = [];
+        $this->elements = [];
 
         $this->merge($elements);
         $this->append($currentElements);

@@ -24,7 +24,7 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
 
     public function __construct(array $elements = [])
     {
-        $this->type         = $this->getType();
+        $this->type = $this->getType();
         $this->nullsAllowed = $this->areNullsAllowed();
 
         foreach ($elements as $element) {
