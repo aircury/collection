@@ -12,20 +12,20 @@ modules:
 composer:
     synchronize: true
 servers:
-    aircury:
-        host: aircury.local
+    env(REPOSITORY_NAME):
+        host: env(REPOSITORY_NAME).local
         mappings:
-            $PROJECT_DIR$: /var/www/aircury/src/collection
+            $PROJECT_DIR$: /var/www/env(REPOSITORY_NAME)/src/collection
 deployment:
     collection:
         type: SFTP
-        host: aircury.local
-        url: http://aircury.local
+        host: env(REPOSITORY_NAME).local
+        url: http://env(REPOSITORY_NAME).local
         port: 2222
         private_key: env(PRIVATE_KEY_PATH)
         mappings:
-            $PROJECT_DIR$: /var/www/aircury/src/collection
-            $PROJECT_DIR$/../..: /var/www/aircury
+            $PROJECT_DIR$: /var/www/env(REPOSITORY_NAME)/src/collection
+            $PROJECT_DIR$/../..: /var/www/env(REPOSITORY_NAME)
 php:
     language_level: 7.1
     xdebug:
@@ -34,7 +34,7 @@ php:
         Remote PHP - collection:
             type: SSH
             username: www-data
-            host: aircury.local
+            host: env(REPOSITORY_NAME).local
             port: 2222
             php_path: /usr/bin/php
             private_key: env(PRIVATE_KEY_PATH)
