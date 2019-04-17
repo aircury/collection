@@ -16,9 +16,6 @@ abstract class AbstractComparableCollection extends AbstractCollection implement
     }
 
     /**
-     * @param ComparableInterface $needle
-     * @param bool                $strict
-     *
      * @return bool|int|string
      */
     public function search(ComparableInterface $needle, bool $strict = false)

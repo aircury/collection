@@ -7,7 +7,7 @@ class ProtectedKeyException extends \LogicException
     /**
      * @param string[] $keys
      *
-     * @return ProtectedKeyException
+     * @return ProtectedKeyException|self
      */
     public static function overwritingKeys(array $keys): self
     {

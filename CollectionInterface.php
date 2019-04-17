@@ -72,7 +72,7 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
     /**
      * Removes the specified element from the collection, if it is found.
      *
-     * @param mixed $element The element to remove.
+     * @param mixed|null $element The element to remove.
      *
      * @return bool TRUE if this collection contained the specified element, FALSE otherwise.
      */

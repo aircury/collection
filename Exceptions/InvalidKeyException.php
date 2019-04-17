@@ -5,10 +5,9 @@ namespace Aircury\Collection\Exceptions;
 class InvalidKeyException extends \LogicException
 {
     /**
-     * @param string   $offset
      * @param string[] $validOffsets
      *
-     * @return InvalidKeyException
+     * @return InvalidKeyException|self
      */
     public static function invalidOffset(string $offset, array $validOffsets = []): self
     {

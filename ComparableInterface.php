@@ -4,8 +4,8 @@ namespace Aircury\Collection;
 
 interface ComparableInterface
 {
-    const IS_SAME_AS      = 0;
-    const IS_IDENTICAL_TO = 1;
+    public const IS_SAME_AS = 0;
+    public const IS_IDENTICAL_TO = 1;
 
     public function isSameAs(ComparableInterface $element): bool;
 

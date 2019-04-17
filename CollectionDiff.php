@@ -4,10 +4,10 @@ namespace Aircury\Collection;
 
 class CollectionDiff
 {
-    const SOURCE  = 0;
-    const ADDED   = 1;
-    const REMOVED = 2;
-    const CHANGED = 3;
+    public const SOURCE = 0;
+    public const ADDED = 1;
+    public const REMOVED = 2;
+    public const CHANGED = 3;
 
     /**
      * @var ComparableInterface[]|int[] 'destinationIndex' => [whichSource, sourceIndex]
@@ -131,19 +131,14 @@ class CollectionDiff
 
     /**
      * Applies this Diff over the collection provided and returns a new one with it applied
-     *
-     * @param ComparableCollectionInterface $sourceCollection
-     * @param bool                          $keepOriginalOrder
-     *
-     * @return ComparableCollectionInterface
      */
     public function apply(
         ComparableCollectionInterface $sourceCollection,
         bool $keepOriginalOrder = false
     ): ComparableCollectionInterface {
         $collectionClass = get_class($sourceCollection);
-        $source          = $sourceCollection->toArray();
-        $array           = [];
+        $source = $sourceCollection->toArray();
+        $array = [];
 
         foreach ($this->changes as $key => [$action, $item]) {
             if (self::SOURCE === $action) {
