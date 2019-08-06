@@ -5,6 +5,7 @@ namespace Aircury\Collection;
 use Aircury\Collection\Exceptions\InvalidKeyException;
 use Aircury\Collection\Exceptions\ProtectedKeyException;
 use Aircury\Collection\Exceptions\UnexpectedElementException;
+use Closure;
 
 abstract class AbstractCollection implements CollectionInterface
 {
@@ -281,6 +282,22 @@ abstract class AbstractCollection implements CollectionInterface
                 $elements[$key] = $element;
             }
         }
+
+        if ($returnNewCollection) {
+            return new static($elements);
+        }
+
+        $this->setElements($elements);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function map(Closure $func, bool $returnNewCollection = true)
+    {
+        $elements = array_map($func, $this->elements);
 
         if ($returnNewCollection) {
             return new static($elements);
