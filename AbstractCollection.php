@@ -5,7 +5,11 @@ namespace Aircury\Collection;
 use Aircury\Collection\Exceptions\InvalidKeyException;
 use Aircury\Collection\Exceptions\ProtectedKeyException;
 use Aircury\Collection\Exceptions\UnexpectedElementException;
+use ArrayIterator;
 use Closure;
+use Traversable;
+use function count;
+use function is_int;
 
 abstract class AbstractCollection implements CollectionInterface
 {
@@ -42,7 +46,7 @@ abstract class AbstractCollection implements CollectionInterface
     private function evaluateIfItIsAssociative(): void
     {
         if (
-            0 !== ($count = \count($this->elements)) &&
+            0 !== ($count = count($this->elements)) &&
             ($keys = array_keys($this->elements)) !== ($range = range(0, $count - 1)) &&
             !$this->isSameButOutOfOrder($keys, $range)
         ) {
@@ -83,7 +87,7 @@ abstract class AbstractCollection implements CollectionInterface
         } else {
             $this->elements[$offset] = $element;
 
-            if (!$this->isAssociative && (!\is_int($offset) || $offset < 0 || $offset > \count($this->elements))) {
+            if (!$this->isAssociative && (!is_int($offset) || $offset < 0 || $offset > count($this->elements))) {
                 $this->isAssociative = true;
             }
         }
@@ -91,7 +95,7 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function offsetUnset($offset): void
     {
-        if (!$this->isAssociative && (\is_int($offset) && $offset < \count($this->elements) - 1)) {
+        if (!$this->isAssociative && (is_int($offset) && $offset < count($this->elements) - 1)) {
             $this->isAssociative = true;
         }
 
@@ -128,7 +132,7 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function count(): int
     {
-        return \count($this->elements);
+        return count($this->elements);
     }
 
     public function first()
@@ -141,9 +145,9 @@ abstract class AbstractCollection implements CollectionInterface
         return end($this->elements);
     }
 
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->elements);
+        return new ArrayIterator($this->elements);
     }
 
     public function isAssociative(): bool
@@ -156,7 +160,7 @@ abstract class AbstractCollection implements CollectionInterface
      */
     public function merge(array $elements): void
     {
-        $count = \count($elements);
+        $count = count($elements);
 
         if (0 === $count) {
             return;
@@ -211,21 +215,21 @@ abstract class AbstractCollection implements CollectionInterface
      */
     public function append(array $elements): void
     {
-        $count = \count($elements);
+        $count = count($elements);
 
         if (0 === $count) {
             return;
         }
 
-        if ($this->isAssociative || 0 === \count($this->elements)) {
-            if (0 !== \count(array_intersect_key($this->elements, $elements))) {
+        if ($this->isAssociative || 0 === count($this->elements)) {
+            if (0 !== count(array_intersect_key($this->elements, $elements))) {
                 throw ProtectedKeyException::overwritingKeys(
                     array_keys(array_intersect_key($this->elements, $elements))
                 );
             }
         } else {
             $keys = array_keys($elements);
-            $thisCount = \count($this->elements);
+            $thisCount = count($this->elements);
 
             if (
                 $keys !== range(0, $count - 1) &&
@@ -324,10 +328,24 @@ abstract class AbstractCollection implements CollectionInterface
         return false;
     }
 
+    public function removeElementByKey($elementKey): bool
+    {
+        // TODO: remove column from indexes and re-define indexes
+        // TODO: the removed column could be a foreign key
+
+        if (array_key_exists($elementKey, $this->elements)) {
+            unset($this->elements[$elementKey]);
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @inheritdoc
      */
-    public function removeElements(\Traversable $elements): bool
+    public function removeElements(Traversable $elements): bool
     {
         $return = false;
 
