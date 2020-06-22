@@ -2,6 +2,8 @@
 
 namespace Aircury\Collection\Tests;
 
+use Aircury\Collection\Exceptions\InvalidKeyException;
+use Aircury\Collection\Exceptions\UnexpectedElementException;
 use Aircury\Collection\IntegerCollection;
 use Aircury\Collection\Tests\Fixtures\Car;
 use PHPUnit\Framework\TestCase;
@@ -44,47 +46,37 @@ class IntegerCollectionTest extends TestCase
         $this->assertCount(3, $integers);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidElementAddedToCollection(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         $integers = new IntegerCollection();
         $integers[] = 3;
         $integers[] = 'a';
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testNullElementAddedToCollection(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         $integers = new IntegerCollection();
         $integers[] = 3;
         $integers[] = null;
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         new IntegerCollection([3, 7.2]);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         new IntegerCollection([42, new Car('Volvo')]);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\InvalidKeyException
-     */
     public function testRetrieveByInvalidKey(): void
     {
+        $this->expectException(InvalidKeyException::class);
         $integers = new IntegerCollection(['A' => 3]);
 
         $integers['X'];

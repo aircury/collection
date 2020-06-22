@@ -2,6 +2,9 @@
 
 namespace Aircury\Collection\Tests;
 
+use Aircury\Collection\Exceptions\InvalidKeyException;
+use Aircury\Collection\Exceptions\ProtectedKeyException;
+use Aircury\Collection\Exceptions\UnexpectedElementException;
 use Aircury\Collection\Tests\Fixtures\Car;
 use Aircury\Collection\Tests\Fixtures\CarCollection;
 use Aircury\Collection\Tests\Fixtures\Human;
@@ -69,37 +72,29 @@ class CarCollectionTest extends TestCase
         $this->assertCount(2, $cars);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidElementAddedToCollection(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         $cars = new CarCollection();
         $cars[] = new Car();
         $cars[] = new Human();
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         new CarCollection([new Car(), new Human()]);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         new CarCollection([new Car(), 'x']);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\InvalidKeyException
-     */
     public function testRetrieveByInvalidKey(): void
     {
+        $this->expectException(InvalidKeyException::class);
         $cars = new CarCollection(['A' => new Car('Porsche')]);
 
         $cars['X'];
@@ -180,11 +175,9 @@ class CarCollectionTest extends TestCase
         $this->assertEquals('BMW', $cars[1]->getMake());
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidMerge(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         $a = new Car('Porsche');
         $b = new Human();
         $cars = new CarCollection([$a]);
@@ -208,11 +201,9 @@ class CarCollectionTest extends TestCase
         $this->assertFalse($cars->isAssociative());
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\ProtectedKeyException
-     */
     public function testInvalidAppend(): void
     {
+        $this->expectException(ProtectedKeyException::class);
         $a = new Car('Porsche');
         $b = new Car('BMW');
         $cars = new CarCollection([1 => $a]);

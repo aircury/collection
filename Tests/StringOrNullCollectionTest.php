@@ -2,6 +2,8 @@
 
 namespace Aircury\Collection\Tests;
 
+use Aircury\Collection\Exceptions\InvalidKeyException;
+use Aircury\Collection\Exceptions\UnexpectedElementException;
 use Aircury\Collection\StringOrNullCollection;
 use Aircury\Collection\Tests\Fixtures\Car;
 use PHPUnit\Framework\TestCase;
@@ -44,11 +46,9 @@ class StringOrNullCollectionTest extends TestCase
         $this->assertCount(3, $strings);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidElementAddedToCollection(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         $strings = new StringOrNullCollection();
         $strings[] = 'a';
         $strings[] = 3;
@@ -67,27 +67,21 @@ class StringOrNullCollectionTest extends TestCase
         $this->assertCount(3, $strings);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         new StringOrNullCollection(['x', 42]);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\UnexpectedElementException
-     */
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
+        $this->expectException(UnexpectedElementException::class);
         new StringOrNullCollection(['x', new Car('Volvo')]);
     }
 
-    /**
-     * @expectedException \Aircury\Collection\Exceptions\InvalidKeyException
-     */
     public function testRetrieveByInvalidKey(): void
     {
+        $this->expectException(InvalidKeyException::class);
         $strings = new StringOrNullCollection(['A' => 'a']);
 
         $strings['X'];
