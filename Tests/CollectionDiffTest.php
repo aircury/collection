@@ -137,6 +137,6 @@ class CollectionDiffTest extends TestCase
         $carsAfterApplied = $carDiff->apply($cars);
 
         $this->assertCount(3, $carsAfterApplied);
-        $this->assertEquals($otherCars->toArray(), $carsAfterApplied->toArray(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($otherCars->toArray(), $carsAfterApplied->toArray(), '');
     }
 }
