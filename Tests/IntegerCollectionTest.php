@@ -49,6 +49,7 @@ class IntegerCollectionTest extends TestCase
     public function testInvalidElementAddedToCollection(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         $integers = new IntegerCollection();
         $integers[] = 3;
         $integers[] = 'a';
@@ -57,6 +58,7 @@ class IntegerCollectionTest extends TestCase
     public function testNullElementAddedToCollection(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         $integers = new IntegerCollection();
         $integers[] = 3;
         $integers[] = null;
@@ -65,18 +67,21 @@ class IntegerCollectionTest extends TestCase
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         new IntegerCollection([3, 7.2]);
     }
 
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         new IntegerCollection([42, new Car('Volvo')]);
     }
 
     public function testRetrieveByInvalidKey(): void
     {
         $this->expectException(InvalidKeyException::class);
+
         $integers = new IntegerCollection(['A' => 3]);
 
         $integers['X'];
