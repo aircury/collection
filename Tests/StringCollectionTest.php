@@ -49,6 +49,7 @@ class StringCollectionTest extends TestCase
     public function testInvalidElementAddedToCollection(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         $strings = new StringCollection();
         $strings[] = 'a';
         $strings[] = 3;
@@ -57,6 +58,7 @@ class StringCollectionTest extends TestCase
     public function testNullElementAddedToCollection(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         $strings = new StringCollection();
         $strings[] = 'a';
         $strings[] = null;
@@ -65,18 +67,21 @@ class StringCollectionTest extends TestCase
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         new StringCollection(['x', 42]);
     }
 
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         new StringCollection(['x', new Car('Volvo')]);
     }
 
     public function testRetrieveByInvalidKey(): void
     {
         $this->expectException(InvalidKeyException::class);
+
         $strings = new StringCollection(['A' => 'a']);
 
         $strings['X'];

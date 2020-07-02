@@ -75,6 +75,7 @@ class CarCollectionTest extends TestCase
     public function testInvalidElementAddedToCollection(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         $cars = new CarCollection();
         $cars[] = new Car();
         $cars[] = new Human();
@@ -83,18 +84,21 @@ class CarCollectionTest extends TestCase
     public function testInvalidElementPassedToCollectionConstructor(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         new CarCollection([new Car(), new Human()]);
     }
 
     public function testInvalidTypePassedToCollectionConstructor(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         new CarCollection([new Car(), 'x']);
     }
 
     public function testRetrieveByInvalidKey(): void
     {
         $this->expectException(InvalidKeyException::class);
+
         $cars = new CarCollection(['A' => new Car('Porsche')]);
 
         $cars['X'];
@@ -178,6 +182,7 @@ class CarCollectionTest extends TestCase
     public function testInvalidMerge(): void
     {
         $this->expectException(UnexpectedElementException::class);
+
         $a = new Car('Porsche');
         $b = new Human();
         $cars = new CarCollection([$a]);
@@ -204,6 +209,7 @@ class CarCollectionTest extends TestCase
     public function testInvalidAppend(): void
     {
         $this->expectException(ProtectedKeyException::class);
+
         $a = new Car('Porsche');
         $b = new Car('BMW');
         $cars = new CarCollection([1 => $a]);
