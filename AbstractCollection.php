@@ -82,7 +82,7 @@ abstract class AbstractCollection implements CollectionInterface
         } else {
             $this->elements[$offset] = $element;
 
-            if (!$this->isAssociative && (!\is_int($offset) || $offset < 0 || $offset > \count($this->elements))) {
+            if (!$this->isAssociative && (!\is_numeric($offset) || $offset < 0 || $offset > \count($this->elements))) {
                 $this->isAssociative = true;
             }
         }
@@ -90,7 +90,7 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function offsetUnset($offset): void
     {
-        if (!$this->isAssociative && \is_int($offset) && $offset < \count($this->elements) - 1) {
+        if (!$this->isAssociative && \is_numeric($offset) && $offset < \count($this->elements) - 1) {
             $this->isAssociative = true;
         }
 
