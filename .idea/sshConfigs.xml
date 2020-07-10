@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="aircury.local" id="89018dac-e3e6-4311-bc55-bdb197443433" keyPath="$USER_HOME$/.ssh/id_rsa" port="2222" nameFormat="DESCRIPTIVE" username="www-data" />
+    </configs>
+  </component>
+</project>
