@@ -1,2 +1,8 @@
-trailing-comma-in-function-calls: false
-flexible-heredoc-and-nowdoc-syntax: false
+trailing-comma-in-function-calls: true
+flexible-heredoc-and-nowdoc-syntax: true
+7.4-null-coalescing-assignment-operator: false
+7.4-arrow-functions: false
+7.4-arrow-functions-force-simplification: false
+7.4-typed-properties: false
+7.4-typed-properties-enforce-comment-types: false
+doctrine-annotations: true
