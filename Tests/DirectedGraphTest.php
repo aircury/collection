@@ -2,12 +2,12 @@
 
 namespace Aircury\Collection\Tests;
 
+use Aircury\Collection\DirectedGraph;
 use Aircury\Collection\Exceptions\DuplicateVertexIdSuppliedException;
 use Aircury\Collection\Exceptions\InvalidNumberOfVerticesException;
 use Aircury\Collection\Exceptions\InvalidVertexIdTypeException;
 use Aircury\Collection\Exceptions\VertexAlreadyExistsException;
 use Aircury\Collection\Exceptions\VertexDoesNotExistException;
-use Aircury\Collection\DirectedGraph;
 use Fhaculty\Graph\Set\Vertices;
 use PHPUnit\Framework\TestCase;
 
@@ -211,6 +211,17 @@ class DirectedGraphTest extends TestCase
         return $graph;
     }
 
+    private function createASimpleDirectedGraphWithALoop(): DirectedGraph
+    {
+        // v1 --> v1
+        $graph = new DirectedGraph();
+
+        $graph->createVerticesByIds([self::SAMPLE_VERTICES_IDS[0]]);
+        $graph->addDirectedEdgeByVerticesIds(self::SAMPLE_VERTICES_IDS[0], self::SAMPLE_VERTICES_IDS[0]);
+
+        return $graph;
+    }
+
     public function test_i_can_create_a_directed_graph(): void
     {
         $graph = $this->createASimpleDirectedGraph();
@@ -317,9 +328,23 @@ class DirectedGraphTest extends TestCase
             ['v1', 'v2', 'v3'],
         ];
 
-        /**
-         * @var Vertices $vertexSet
-         */
+        foreach ($cycles as $index => $vertexSet) {
+            $this->assertSame($expectedCycles[$index], $vertexSet->getVerticesOrder(Vertices::ORDER_ID)->getIds());
+        }
+    }
+
+    public function test_get_cycles_for_a_directed_graph_with_a_loop(): void
+    {
+        $graph = $this->createASimpleDirectedGraphWithALoop();
+
+        $cycles = $graph->getCycles();
+
+        $this->assertNotEmpty($cycles);
+
+        $expectedCycles = [
+            ['v1'],
+        ];
+
         foreach ($cycles as $index => $vertexSet) {
             $this->assertSame($expectedCycles[$index], $vertexSet->getVerticesOrder(Vertices::ORDER_ID)->getIds());
         }

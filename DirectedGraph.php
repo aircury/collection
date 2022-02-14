@@ -120,4 +120,30 @@ class DirectedGraph
             ),
         );
     }
+
+    /**
+     * @return Vertices[]
+     */
+    public function getCycles(): array
+    {
+        $stronglyConnectedComponents = (new TarjanStronglyConnectedComponents($this->graph))
+            ->getStronglyConnectedComponents();
+        $cycles = [];
+
+        foreach ($stronglyConnectedComponents as $component) {
+            if (1 === count($component)) {
+                // Check for edges pointing to itself (loop)
+                $vertex = $component->getVector()[0];
+                $edgesToSelf = $vertex->getEdgesTo($vertex);
+
+                if (0 === count($edgesToSelf)) {
+                    continue;
+                }
+            }
+
+            $cycles[] = $component;
+        }
+
+        return $cycles;
+    }
 }
