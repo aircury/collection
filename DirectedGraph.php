@@ -11,6 +11,7 @@ namespace Aircury\Collection;
 use Aircury\Collection\Exceptions\DuplicateVertexIdSuppliedException;
 use Aircury\Collection\Exceptions\InvalidNumberOfVerticesException;
 use Aircury\Collection\Exceptions\InvalidVertexIdTypeException;
+use Aircury\Collection\Exceptions\NotADirectedAcyclicGraphException;
 use Aircury\Collection\Exceptions\VertexAlreadyExistsException;
 use Aircury\Collection\Exceptions\VertexDoesNotExistException;
 use Fhaculty\Graph\Edge\Directed;
@@ -18,6 +19,7 @@ use Fhaculty\Graph\Graph as FhacultyGraph;
 use Fhaculty\Graph\Set\Vertices;
 use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\Search\DepthFirst;
+use Graphp\Algorithms\TopologicalSort;
 
 class DirectedGraph
 {
@@ -145,5 +147,14 @@ class DirectedGraph
         }
 
         return $cycles;
+    }
+
+    public function getTopologicalOrder(): Vertices
+    {
+        try {
+            return (new TopologicalSort($this->graph))->getVertices();
+        } catch (\UnexpectedValueException $e) {
+            throw new NotADirectedAcyclicGraphException();
+        }
     }
 }

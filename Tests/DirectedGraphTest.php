@@ -6,6 +6,7 @@ use Aircury\Collection\DirectedGraph;
 use Aircury\Collection\Exceptions\DuplicateVertexIdSuppliedException;
 use Aircury\Collection\Exceptions\InvalidNumberOfVerticesException;
 use Aircury\Collection\Exceptions\InvalidVertexIdTypeException;
+use Aircury\Collection\Exceptions\NotADirectedAcyclicGraphException;
 use Aircury\Collection\Exceptions\VertexAlreadyExistsException;
 use Aircury\Collection\Exceptions\VertexDoesNotExistException;
 use Fhaculty\Graph\Set\Vertices;
@@ -182,6 +183,25 @@ class DirectedGraphTest extends TestCase
         return $graph;
     }
 
+    private function createADirectedGraphWithIsolatedVertices(): DirectedGraph
+    {
+        /**
+         * v4 <- v2 <- v3
+         * v1 (isolated)
+         * v5 (isolated)
+         */
+
+        $graph = new DirectedGraph();
+
+        $graph->createVerticesByIds(self::SAMPLE_VERTICES_IDS);
+        $graph->createVertex('v5');
+
+        $graph->addDirectedEdgeByVerticesIds(self::SAMPLE_VERTICES_IDS[1], self::SAMPLE_VERTICES_IDS[3]);
+        $graph->addDirectedEdgeByVerticesIds(self::SAMPLE_VERTICES_IDS[2], self::SAMPLE_VERTICES_IDS[1]);
+
+        return $graph;
+    }
+
     private function createASimpleDirectedGraphWithACycle(): DirectedGraph
     {
         /**
@@ -348,5 +368,53 @@ class DirectedGraphTest extends TestCase
         foreach ($cycles as $index => $vertexSet) {
             $this->assertSame($expectedCycles[$index], $vertexSet->getVerticesOrder(Vertices::ORDER_ID)->getIds());
         }
+    }
+
+    public function test_get_topological_order_for_a_directed_graph(): void
+    {
+        $graph = $this->createASimpleDirectedGraph();
+        // The expected order is the one based on the vertex with dependencies, hence the array_reverse()
+        // as the algorithm returns the order based on the dependent side.
+        $expectedOrder = ['v1', 'v2', 'v4', 'v3'];
+        $verticesIdsOrdered = $graph->getTopologicalOrder()->getIds();
+
+        $this->assertEquals($expectedOrder, array_reverse($verticesIdsOrdered));
+    }
+
+    public function test_get_topological_order_for_a_directed_graph_with_isolated_vertex(): void
+    {
+        $graph = $this->createADirectedGraphWithIsolatedVertices();
+        // The topological order reads the vertices in the reversed order of insertion
+        // and returns the order based on the dependent side.
+        // The expected order is the one based on the vertex with dependencies, hence the array_reverse()
+        $expectedOrder = ['v5', 'v4', 'v2', 'v3', 'v1'];
+        $verticesIdsOrdered = $graph->getTopologicalOrder()->getIds();
+
+        $this->assertEquals($expectedOrder, array_reverse($verticesIdsOrdered));
+    }
+
+    public function test_get_topological_order_for_a_directed_cyclic_graph(): void
+    {
+        $graphsToTest = [
+            $this->createASimpleDirectedGraphWithACycle(),
+            $this->createASimpleDirectedGraphWithALoop(),
+        ];
+
+        $numberOfExceptions = 0;
+
+        foreach ($graphsToTest as $graph) {
+            try {
+                $graph->getTopologicalOrder()->getVertices();
+            } catch (NotADirectedAcyclicGraphException $e) {
+                ++$numberOfExceptions;
+
+                $this->assertEquals(
+                    'The graph is not a Directed Acyclic Graph (DAG). Cycles and/or loops detected.',
+                    $e->getMessage(),
+                );
+            }
+        }
+
+        $this->assertEquals(count($graphsToTest), $numberOfExceptions);
     }
 }
