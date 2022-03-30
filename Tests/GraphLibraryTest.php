@@ -7,6 +7,13 @@ use Graphp\Algorithms\Search\DepthFirst;
 use Graphp\Algorithms\TopologicalSort;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * This class is meant to be used as an entry point to start using the graph libraries:
+ * - GraPHP, the mathematical graph/network library written in PHP: https://github.com/graphp/graph
+ * - Common mathematical graph algorithms implemented in PHP: https://github.com/graphp/algorithms
+ *
+ * It can also be used as documentation for its functionalities or test anything before including it in another class.
+ */
 class GraphLibraryTest extends TestCase
 {
     private const SAMPLE_VERTICES_IDS = ['v1', 'v2', 'v3', 'v4'];

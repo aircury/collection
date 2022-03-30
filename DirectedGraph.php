@@ -47,6 +47,9 @@ class DirectedGraph
         }
     }
 
+    /**
+     * @param int[]|string[] $verticesIds Array of vertices IDs
+     */
     public function createVerticesByIds(array $verticesIds): Vertices
     {
         try {
@@ -54,9 +57,9 @@ class DirectedGraph
         } catch (\InvalidArgumentException $e) {
             if (false !== strpos($e->getMessage(), 'integer or string')) {
                 throw new InvalidVertexIdTypeException();
-            } else {
-                throw new DuplicateVertexIdSuppliedException();
             }
+
+            throw new DuplicateVertexIdSuppliedException();
         } catch (\OverflowException $e) {
             throw new VertexAlreadyExistsException();
         }
@@ -88,6 +91,9 @@ class DirectedGraph
         return $this->graph->getVertices();
     }
 
+    /**
+     * @return int[]|string[] Array of vertices IDs
+     */
     public function getVerticesIds(): array
     {
         return $this->graph->getVertices()->getIds();
@@ -106,6 +112,20 @@ class DirectedGraph
     }
 
     /**
+     * It will return all the direct and transitive dependencies of the supplied Vertex within the graph.
+     * E.g:
+     *
+     * a -> b -> c
+     * d -> e
+     *
+     * The vertex 'a' has 'b' as a direct dependency.
+     * The vertex 'a' has 'c' as a transitive dependency.
+     * The vertex 'b' has 'c' as a direct dependency.
+     * The vertex 'd' has 'e' as a direct dependency.
+     *
+     * The vertices 'c' and 'e' have no direct dependencies.
+     * The vertices 'b', 'c', 'd' and 'e' have no transitive dependencies.
+     *
      * @return int[]|string[] Array of vertices Ids that the $vertex depends on (direct and transitive dependencies)
      */
     public function getAllDependencies(Vertex $vertex): array
@@ -124,6 +144,15 @@ class DirectedGraph
     }
 
     /**
+     * It returns all the cycles or loops within the graph.
+     * E.g:
+     *
+     * a -> b -> c -> a (cycle)
+     * d -> d (loop)
+     *
+     * The resulting array will contain the Vertices that form each cycle or loop, here represented by their IDs:
+     * [[a, b, c], [d]]
+     *
      * @return Vertices[]
      */
     public function getCycles(): array

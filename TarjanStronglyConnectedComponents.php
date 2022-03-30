@@ -17,14 +17,14 @@ use Graphp\Algorithms\Directed;
 class TarjanStronglyConnectedComponents
 {
     /**
-     * @var Graph $graph
+     * @var Graph
      */
     private $graph;
 
     /**
      * Map of the indexes for every vertex used, using the vertex ID as key.
      * Index represents the order the vertices are visited using DFS.
-     * @var int[] $vertexIndex
+     * @var int[]
      */
     private $vertexIndex;
 
@@ -33,28 +33,28 @@ class TarjanStronglyConnectedComponents
      * Low link represents the smallest index of any vertex on the stack known to be
      * reachable from the vertex represented by its ID as key through every successor
      * reached by DFS and including itself.
-     * @var int[] $vertexLowLink
+     * @var int[]
      */
     private $vertexLowLink;
 
     /**
-     * @var Vertex[] $vertexStack
+     * @var Vertex[]
      */
     private $vertexStack;
 
     /**
-     * @var boolean[] $onStack
+     * @var boolean[]
      */
     private $onStack;
 
     /**
      * An array of Vertex sets that each one form an SCC
-     * @var Vertices[] $stronglyConnectedComponents
+     * @var Vertices[]
      */
     private $stronglyConnectedComponents;
 
     /**
-     * @var int $index
+     * @var int
      */
     private $index;
 
@@ -84,6 +84,22 @@ class TarjanStronglyConnectedComponents
     }
 
     /**
+     * It will obtain all the SCCs of a graph.
+     * An SCC is a subset of Vertices from a graph.
+     * All the Vertices in an SCC can reach every other Vertex within the same SCC.
+     *
+     * Every SCC in a directed graph is essentially representing a Cycle or a Loop.
+     *
+     * E.g:
+     * a -> b -> c -> a (cycle)
+     * c -> d
+     * d -> e -> f -> d (cycle)
+     * e -> g
+     * g -> g (loop)
+     *
+     * The strongly connected components within the example graph are (Vertices are represented by their IDs in this example):
+     * [[a, b, c], [d, e, f], [g]]
+     *
      * @return Vertices[]
      */
     public function getStronglyConnectedComponents(): array
@@ -103,7 +119,7 @@ class TarjanStronglyConnectedComponents
     }
 
     /**
-     * This method uses DFS to visit all the vertices connected to the given vertex (root) and generate the SCCs.
+     * This method uses DFS (Depth First Search) to visit all the vertices connected to the given vertex (root) and generate the SCCs.
      */
     private function strongConnect(Vertex $vertex): void
     {
