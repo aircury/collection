@@ -51,7 +51,7 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         return isset($this->elements[$offset]) || array_key_exists($offset, $this->elements);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (!isset($this->elements[$offset])) {
             throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
