@@ -62,7 +62,7 @@ abstract class AbstractCollection implements CollectionInterface
         return array_key_exists($offset, $this->elements);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (!isset($this->elements[$offset])) {
             throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
