@@ -13,7 +13,8 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
 
     public function offsetSet($offset, $element): void;
 
-    public function offsetGet($offset): mixed;
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset);
 
     public function offsetUnset($offset): void;
 

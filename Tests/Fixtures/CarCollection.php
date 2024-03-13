@@ -6,7 +6,7 @@ use Aircury\Collection\AbstractCollection;
 
 /**
  * @method void          offsetSet($offset, Car $element)
- * @method Car           offsetGet($offset)
+ * @method Car           #[\ReturnTypeWillChange] offsetGet($offset)
  * @method Car[]         toArray()
  * @method Car[]         toValuesArray()
  * @method Car|null      first()
