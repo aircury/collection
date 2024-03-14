@@ -6,7 +6,7 @@ use Aircury\Collection\AbstractComparableCollection;
 
 /**
  * @method void                    offsetSet($offset, ComparableCar $element)
- * @method ComparableCar           offsetGet($offset)
+ * @method ComparableCar           #[\ReturnTypeWillChange] offsetGet($offset)
  * @method ComparableCar[]         toArray()
  * @method ComparableCar[]         toValuesArray()
  * @method ComparableCar|null      first()
