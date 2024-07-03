@@ -20,7 +20,7 @@
         }
     },
     "require": {
-        "php": "^7.2|^8.0",
+        "php": "^8.3",
         "clue/graph": "^0.9.3",
         "graphp/algorithms": "^0.8.2"
     },
