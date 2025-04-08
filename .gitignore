@@ -5,6 +5,7 @@
 /bin/*
 
 .phpunit.result.cache
+.php-cs-fixer.cache
 
 ###> JetBrains ###
 # Copied from: https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
