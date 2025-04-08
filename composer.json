@@ -9,6 +9,12 @@
             "email": "jose@aircury.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/aircury/code-manager.git"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Aircury\\Collection\\": "./"
@@ -25,6 +31,7 @@
         "graphp/algorithms": "^0.8.2"
     },
     "require-dev": {
+        "aircury/code-manager": "dev-main",
         "phpspec/prophecy-phpunit": "^2.2",
         "phpunit/phpunit": "^11.2"
     },
