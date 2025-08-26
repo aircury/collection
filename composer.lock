@@ -133,12 +133,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aircury/code-manager.git",
-                "reference": "06980c4b86cc2d587a98bc683533229c7fcb8b79"
+                "reference": "90c7975c9ad6356eba9ed1154db247471a9ceb68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aircury/code-manager/zipball/06980c4b86cc2d587a98bc683533229c7fcb8b79",
-                "reference": "06980c4b86cc2d587a98bc683533229c7fcb8b79",
+                "url": "https://api.github.com/repos/aircury/code-manager/zipball/90c7975c9ad6356eba9ed1154db247471a9ceb68",
+                "reference": "90c7975c9ad6356eba9ed1154db247471a9ceb68",
                 "shasum": ""
             },
             "require": {
@@ -165,7 +165,7 @@
             "support": {
                 "source": "https://github.com/aircury/code-manager/tree/main"
             },
-            "time": "2025-06-05T15:49:33+00:00"
+            "time": "2025-08-26T08:16:55+00:00"
         },
         {
             "name": "clue/ndjson-react",
