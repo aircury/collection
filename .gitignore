@@ -7,6 +7,15 @@
 .phpunit.result.cache
 .php-cs-fixer.cache
 
+###> AI product adapters (canonical layout is .agents/ + AGENTS.md) ###
+.claude/
+.cursor/
+.codex/
+.gemini/
+.github/skills/
+.windsurf/
+###< AI product adapters (canonical layout is .agents/ + AGENTS.md) ###
+
 ###> JetBrains ###
 # Copied from: https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
