@@ -32,3 +32,23 @@ These classes include additional expected functionality that you would expect fr
 `sum()`, ...
 
 If they do not suit your needs, you can extend any of them or the `AbstractScalarTypeCollection` to implement your own. 
+
+<!-- development-standards:begin -->
+## Development standards
+
+Commitment: `R1 D1 C1 L1 S1 P1`
+
+Not applicable:
+
+- `I` — this is a PHP library and does not expose an HTTP API.
+- `E` — this package does not provide browser-based end-to-end journeys.
+- `Y` — this package is not deployed as a standalone service.
+- `B` — the package does not retain any data of its own.
+- `O` — this package does not run as a production service with operational observability.
+- `U` — this package does not publish an availability commitment.
+- `T` — this package does not publish a support SLA.
+- `A` — this package does not include user-facing browser UI.
+
+Assessed on 2026-08-11 — see
+[docs/development-standards-assessment.md](docs/development-standards-assessment.md).
+<!-- development-standards:end -->
