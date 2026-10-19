@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out Collection
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Check out the Aircury app container's Dockerfile
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: aircury/aircury
+          token: ${{ secrets.AIRCURY_REPOSITORY_TOKEN }}
+          path: .aircury
+          sparse-checkout: docker/app
+          sparse-checkout-cone-mode: false
+
+      - name: Run make ci
+        run: make ci AIRCURY_DIR=.aircury
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
