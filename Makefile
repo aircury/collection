@@ -1,6 +1,9 @@
 .DEFAULT_GOAL = help
 
 IMAGE ?= collection-app
+
+# Prints its argument in yellow, with a blank line before and after.
+MESSAGE = printf '\n\033[33m%s\033[0m\n\n'
 PATHS ?=
 
 # Editor configuration checker variables.
@@ -26,22 +29,26 @@ help: ## List the available commands
 
 .PHONY: init
 init: image ## Build the library container and install dependencies
+	@$(MESSAGE) "Installing dependencies..."
 	$(APP) composer install --no-interaction
 
 .PHONY: image
 image: ## Build the library image
+	@$(MESSAGE) "Building image..."
 	docker build --tag $(IMAGE) - < Dockerfile
 
 .PHONY: ci
 ci: init test editorconfig ## Run every check inside the library container
-	@echo "TODO: Add coverage, PHPStan and the vulnerability audit."
+	@$(MESSAGE) "TODO: Add coverage, PHPStan and the vulnerability audit."
 
 .PHONY: test
 test: ## Run PHPUnit inside the library container, optionally narrowed with PATHS=...
+	@$(MESSAGE) "Running tests..."
 	$(APP) bin/phpunit $(PATHS)
 
 .PHONY: editorconfig
 editorconfig: $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container
+	@$(MESSAGE) "Checking editor config..."
 	$(APP) $(EDITORCONFIG_CHECKER) -exclude '$(EDITORCONFIG_EXCLUDE)'
 
 $(EDITORCONFIG_CHECKER): | image ## Downloads the pinned release and refuses it unless its checksum matches.
@@ -54,8 +61,8 @@ $(EDITORCONFIG_CHECKER): | image ## Downloads the pinned release and refuses it 
 
 .PHONY: up
 up: ## This library starts no service
-	@echo "Collection is a library: it starts no service."
+	@$(MESSAGE) "Collection is a library: it starts no service."
 
 .PHONY: urls
 urls: ## This library exposes no URL
-	@echo "Collection is a library: it starts no service, so there are no URLs."
+	@$(MESSAGE) "Collection is a library: it starts no service, so there are no URLs."
