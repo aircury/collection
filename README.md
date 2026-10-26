@@ -31,4 +31,31 @@ This library comes out of the box with the following Collections, ready to use:
 These classes include additional expected functionality that you would expect from the data type, e.g. `implode()`, 
 `sum()`, ...
 
-If they do not suit your needs, you can extend any of them or the `AbstractScalarTypeCollection` to implement your own. 
+If they do not suit your needs, you can extend any of them or the `AbstractScalarTypeCollection` to implement your own.
+
+<!-- development-standards:begin -->
+## Development standards
+
+Project type: internal tool not in production.
+
+Commitment: `R3 D1 I:N/A C1 E:N/A L2 Y:N/A B:N/A S2 O:N/A P1 U:N/A T:N/A A:N/A`
+
+Deviations: none.
+
+Not applicable:
+
+- `I` — Collection does not publish an HTTP API.
+- `E` — there is no application a person uses in a browser.
+- `Y` — it is not deployed. Connector consumes it as a path repository on `dev-master`.
+- `B` — it retains no data and has no hosted environment.
+- `O` — it has no production process.
+- `U` — there is no service whose availability can be promised.
+- `T` — it has no support channel of its own.
+- `A` — it has no user interface.
+
+Assessed on 2026-10-26 against the standards published at
+<https://curipedia.aircury.net/development-standards>.
+That page did not publish a revision identifier.
+Project revision: `b8f1e974cc7e83b2cdf7a50eff21be8ff7f524cc`.
+See [docs/development-standards-assessment.md](docs/development-standards-assessment.md).
+<!-- development-standards:end -->
