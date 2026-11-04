@@ -38,13 +38,18 @@ image: ## Build the library image
 	docker build --tag $(IMAGE) - < Dockerfile
 
 .PHONY: ci
-ci: init test editorconfig ## Run every check inside the library container
-	@$(MESSAGE) "TODO: Add coverage, PHPStan and the vulnerability audit."
+ci: init test phpstan editorconfig ## Run every check inside the library container
+	@$(MESSAGE) "TODO: Add coverage and the vulnerability audit."
 
 .PHONY: test
 test: ## Run PHPUnit inside the library container, optionally narrowed with PATHS=...
 	@$(MESSAGE) "Running tests..."
 	$(APP) bin/phpunit $(PATHS)
+
+.PHONY: phpstan
+phpstan: ## Run PHPStan inside the library container
+	@$(MESSAGE) "Running PHPStan..."
+	$(APP) bin/phpstan analyse --no-progress --memory-limit=1G
 
 .PHONY: editorconfig
 editorconfig: $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container
