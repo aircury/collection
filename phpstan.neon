@@ -1,0 +1,18 @@
+# Static analysis at the strictest level the installed PHPStan supports, with no baseline.
+# Ignored errors that no longer match fail the run (reportUnmatchedIgnoredErrors, on by default).
+#
+# Shape gates (file size, duplication, complexity) come from aircury/code-manager, at its defaults:
+# the file-size ceiling is the standards' example of 800 lines, as no measured ceiling is recorded yet.
+#
+# TODO: composer.json requires aircury/code-manager "dev-dev-standards-phpstan" for these rules.
+# Change it back to "dev-main" (and run composer update aircury/code-manager) once that branch is merged.
+includes:
+    - vendor/aircury/code-manager/rules.neon
+
+parameters:
+    level: max
+    paths:
+        - .
+    excludePaths:
+        - bin/
+        - vendor/
