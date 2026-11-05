@@ -5,23 +5,24 @@ namespace Aircury\Collection;
 use Aircury\Collection\Exceptions\InvalidKeyException;
 use Aircury\Collection\Exceptions\UnexpectedElementException;
 
+/**
+ * @implements \ArrayAccess<array-key, mixed>
+ * @implements \IteratorAggregate<array-key, mixed>
+ */
 abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
-     * @var mixed[]
+     * @var array<array-key, mixed>
      */
-    private $elements;
+    private array $elements;
+
+    private string $type;
+
+    private bool $nullsAllowed;
 
     /**
-     * @var string
+     * @param array<array-key, mixed> $elements
      */
-    private $type;
-
-    /**
-     * @var bool[]
-     */
-    private $nullsAllowed;
-
     public function __construct(array $elements = [])
     {
         $this->type = $this->getType();
@@ -46,15 +47,25 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         return false;
     }
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetExists($offset): bool
     {
-        return isset($this->elements[$offset]) || array_key_exists($offset, $this->elements);
+        return (\is_int($offset) || \is_string($offset)) && array_key_exists($offset, $this->elements);
     }
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetGet($offset): mixed
     {
-        if (!isset($this->elements[$offset])) {
-            throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
+        // array_key_exists, not isset: isset is false for null elements, which nullable collections may hold
+        if (!$this->offsetExists($offset)) {
+            throw InvalidKeyException::invalidOffset(
+                \is_scalar($offset) ? (string) $offset : get_debug_type($offset),
+                array_keys($this->elements)
+            );
         }
 
         return $this->elements[$offset];
@@ -76,6 +87,9 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         unset($this->elements[$offset]);
     }
 
+    /**
+     * @return array<array-key, mixed>
+     */
     public function toArray(): array
     {
         return $this->elements;
@@ -86,16 +100,19 @@ abstract class AbstractScalarTypeCollection implements \ArrayAccess, \Countable,
         return \count($this->elements);
     }
 
-    public function first()
+    public function first(): mixed
     {
         return reset($this->elements);
     }
 
-    public function last()
+    public function last(): mixed
     {
         return end($this->elements);
     }
 
+    /**
+     * @return \ArrayIterator<array-key, mixed>
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->elements);

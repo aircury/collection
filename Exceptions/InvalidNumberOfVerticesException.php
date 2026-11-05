@@ -6,7 +6,7 @@ class InvalidNumberOfVerticesException extends \LogicException
 {
     private const MESSAGE = 'Invalid number of vertices given. Must be non-negative integer';
 
-    public function __construct($code = 0, $previous = null)
+    public function __construct(int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, $code, $previous);
     }
