@@ -18,12 +18,12 @@ abstract class AbstractComparableCollection extends AbstractCollection implement
     /**
      * @return bool|int|string
      */
-    public function search(ComparableInterface $needle, bool $strict = false)
+    public function search(ComparableInterface $needle, bool $strict = false): bool|int|string
     {
         $comparisonMethod = $strict ? ComparableInterface::IS_IDENTICAL_TO : ComparableInterface::IS_SAME_AS;
 
         foreach ($this->toArray() as $key => $element) {
-            if ($needle->compareTo($comparisonMethod, $element)) {
+            if ($element instanceof ComparableInterface && $needle->compareTo($comparisonMethod, $element)) {
                 return $key;
             }
         }

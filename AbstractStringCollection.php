@@ -9,7 +9,7 @@ abstract class AbstractStringCollection extends AbstractScalarTypeCollection
         return 'string';
     }
 
-    public function implode($glue = '', $skipNulls = true): string
+    public function implode(string $glue = '', bool $skipNulls = true): string
     {
         if ($this->areNullsAllowed() && $skipNulls) {
             $array = [];

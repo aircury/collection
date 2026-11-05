@@ -34,7 +34,7 @@ class DirectedGraph
     }
 
     /**
-     * @param int|string $vertexId
+     * @param int|string|null $vertexId
      */
     public function createVertex($vertexId = null): Vertex
     {
@@ -43,7 +43,7 @@ class DirectedGraph
         } catch (\InvalidArgumentException $e) {
             throw new InvalidVertexIdTypeException((string) $vertexId, $e->getCode(), $e);
         } catch (\OverflowException $e) {
-            throw new VertexAlreadyExistsException($vertexId, $e->getCode(), $e);
+            throw new VertexAlreadyExistsException((string) $vertexId, $e->getCode(), $e);
         }
     }
 
@@ -92,11 +92,14 @@ class DirectedGraph
     }
 
     /**
-     * @return int[]|string[] Array of vertices IDs
+     * @return list<int|string> Array of vertices IDs
      */
     public function getVerticesIds(): array
     {
-        return $this->graph->getVertices()->getIds();
+        /** @var list<int|string> $ids The vendor only documents a plain array, but vertex IDs are always int|string */
+        $ids = $this->graph->getVertices()->getIds();
+
+        return $ids;
     }
 
     /**
@@ -107,7 +110,7 @@ class DirectedGraph
         try {
             return $this->graph->getVertex($vertexId);
         } catch (\OutOfBoundsException $e) {
-            throw new VertexDoesNotExistException($vertexId, $e->getCode(), $e);
+            throw new VertexDoesNotExistException((string) $vertexId, $e->getCode(), $e);
         }
     }
 
@@ -126,11 +129,12 @@ class DirectedGraph
      * The vertices 'c' and 'e' have no direct dependencies.
      * The vertices 'b', 'c', 'd' and 'e' have no transitive dependencies.
      *
-     * @return int[]|string[] Array of vertices Ids that the $vertex depends on (direct and transitive dependencies)
+     * @return list<int|string> Array of vertices Ids that the $vertex depends on (direct and transitive dependencies)
      */
     public function getAllDependencies(Vertex $vertex): array
     {
         $vertexIdToRemove = $vertex->getId();
+        /** @var list<int|string> $dfsResult The vendor only documents a plain array, but vertex IDs are always int|string */
         $dfsResult = (new DepthFirst($vertex))->getVertices()->getIds();
 
         return array_values(
