@@ -30,12 +30,14 @@ class StringCollectionTest extends TestCase
 
         unset($strings[1]);
 
+        // @phpstan-ignore isset.offset, method.alreadyNarrowedType (the test checks isset() after unsetting other keys)
         $this->assertTrue(isset($strings[0]));
         $this->assertFalse(isset($strings[1]));
         $this->assertFalse(isset($strings[2]));
 
         $strings[] = 'x';
 
+        // @phpstan-ignore isset.offset (the test checks isset() after unsetting other keys)
         $this->assertTrue(isset($strings[0]));
         $this->assertFalse(isset($strings[1]));
         $this->assertTrue(isset($strings[2]));
@@ -52,6 +54,7 @@ class StringCollectionTest extends TestCase
 
         $strings = new StringCollection();
         $strings[] = 'a';
+        // @phpstan-ignore offsetAssign.valueType (the test checks that an invalid element is rejected)
         $strings[] = 3;
     }
 
@@ -61,6 +64,7 @@ class StringCollectionTest extends TestCase
 
         $strings = new StringCollection();
         $strings[] = 'a';
+        // @phpstan-ignore offsetAssign.valueType (the test checks that an invalid element is rejected)
         $strings[] = null;
     }
 
@@ -84,6 +88,7 @@ class StringCollectionTest extends TestCase
 
         $strings = new StringCollection(['A' => 'a']);
 
+        // @phpstan-ignore expr.resultUnused (the test checks that reading a missing key throws)
         $strings['X'];
     }
 

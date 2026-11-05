@@ -4,7 +4,7 @@ namespace Aircury\Collection\Exceptions;
 
 class UnexpectedElementException extends \LogicException
 {
-    public static function typeConstraint(string $expectedType, $elementGiven): self
+    public static function typeConstraint(string $expectedType, mixed $elementGiven): self
     {
         if (is_object($elementGiven)) {
             return new self(
@@ -25,7 +25,7 @@ class UnexpectedElementException extends \LogicException
         );
     }
 
-    public static function classConstraint(string $expectedClass, $elementGiven): self
+    public static function classConstraint(string $expectedClass, mixed $elementGiven): self
     {
         if (is_object($elementGiven)) {
             return new self(

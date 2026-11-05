@@ -16,3 +16,8 @@ parameters:
     excludePaths:
         - bin/
         - vendor/
+    ignoreErrors:
+        # The vendor PHPDoc of Graph::createVertex() says int|null, but Vertex::__construct() accepts int|string
+        -
+            identifier: argument.type
+            message: '#^Parameter \#1 \$id of method Fhaculty\\Graph\\Graph::createVertex\(\) expects int\|null, .+ given\.$#'

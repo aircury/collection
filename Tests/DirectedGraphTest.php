@@ -52,6 +52,7 @@ class DirectedGraphTest extends TestCase
         $this->expectException(InvalidVertexIdTypeException::class);
         $this->expectExceptionMessage('Vertex ID type not allowed for \'7.5\'. Allowed types: string, integer');
 
+        // @phpstan-ignore argument.type (the test checks that an invalid vertex ID type is rejected)
         $graph->createVertex(7.5);
     }
 
@@ -135,6 +136,7 @@ class DirectedGraphTest extends TestCase
         $this->expectException(InvalidVertexIdTypeException::class);
         $this->expectExceptionMessage('Vertex ID type not allowed. Allowed types: string, integer');
 
+        // @phpstan-ignore argument.type (the test checks that an invalid vertex ID type is rejected)
         $graph->createVerticesByIds(['v1', 4.5, 'v3']);
     }
 
@@ -416,5 +418,22 @@ class DirectedGraphTest extends TestCase
         }
 
         $this->assertEquals(count($graphsToTest), $numberOfExceptions);
+    }
+
+    public function testCreateDuplicatedIntegerVertex(): void
+    {
+        $graph = new DirectedGraph();
+        $graph->createVertex(1);
+
+        $this->expectException(VertexAlreadyExistsException::class);
+
+        $graph->createVertex(1);
+    }
+
+    public function testGetNonExistentIntegerVertex(): void
+    {
+        $this->expectException(VertexDoesNotExistException::class);
+
+        (new DirectedGraph())->getVertexById(1);
     }
 }
