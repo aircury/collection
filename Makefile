@@ -42,13 +42,18 @@ image: ## Build the library image
 ci: ## Run every check inside the library container: cheap checks in parallel first, then the checks that need dependencies
 	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target editorconfig
 	@$(MAKE) --no-print-directory init
-	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target test phpstan
+	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target coverage phpstan
 	@$(MESSAGE) "TODO: Add coverage and the vulnerability audit."
 
 .PHONY: test
 test: ## Run PHPUnit inside the library container, optionally narrowed with PATHS=...
 	@$(MESSAGE) "Running tests..."
 	$(APP) bin/phpunit $(PATHS)
+
+.PHONY: coverage
+coverage: ## Run PHPUnit with coverage and check it against coverage-threshold.json
+	@$(MESSAGE) "Running tests with coverage..."
+	$(APP) sh -c 'bin/phpunit --coverage-clover /tmp/clover.xml && php ci/check-coverage.php /tmp/clover.xml'
 
 .PHONY: phpstan
 phpstan: ## Run PHPStan inside the library container, optionally narrowed with PATHS=...
