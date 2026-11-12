@@ -38,13 +38,18 @@ image: ## Build the library image
 	docker build --tag $(IMAGE) - < Dockerfile
 
 .PHONY: ci
-ci: init test phpstan editorconfig ## Run every check inside the library container
-	@$(MESSAGE) "TODO: Add coverage and the vulnerability audit."
+ci: init phpstan editorconfig coverage ## Run every check inside the library container
+	@$(MESSAGE) "TODO: Add the vulnerability audit."
 
 .PHONY: test
 test: ## Run PHPUnit inside the library container, optionally narrowed with PATHS=...
 	@$(MESSAGE) "Running tests..."
 	$(APP) bin/phpunit $(PATHS)
+
+.PHONY: coverage
+coverage: ## Run PHPUnit with coverage and check it against coverage-threshold.json
+	@$(MESSAGE) "Running tests with coverage..."
+	$(APP) sh -c 'bin/phpunit --coverage-clover /tmp/clover.xml && php ci/check-coverage.php /tmp/clover.xml'
 
 .PHONY: phpstan
 phpstan: ## Run PHPStan inside the library container
