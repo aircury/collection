@@ -113,14 +113,14 @@ that a static-analysis or CI gate has passed.
 ## Contributing
 
 1. Create a branch for a focused change from the repository's default branch.
-2. Follow the surrounding PHP style and namespace conventions. Add or update
-   tests in `Tests/` for changed behaviour; put test fixtures in `Tests/Fixtures/`.
+2. Follow the surrounding PHP style and namespace conventions. Add or update 
+  tests in `Tests/` for changed behaviour; put test fixtures in `Tests/Fixtures/`.
 3. Run the relevant tests and syntax checks while developing, then the full
-   PHPUnit suite before submitting. Update this README when usage or setup changes.
+  PHPUnit suite before submitting. Update this README when usage or setup changes.
 4. Use English conventional commit messages prefixed by the work item's
-   reference, for example `[ABC-123] fix(collection): handle empty collections`.
+  reference, for example `[ABC-123] fix(collection): handle empty collections`.
 5. Open a pull request describing the problem, the change, and the checks you
-   ran (including any failures or checks you could not run).
+  ran (including any failures or checks you could not run).
 
 Report bugs and propose changes through
 [GitHub issues](https://github.com/aircury/collection/issues), including a minimal
