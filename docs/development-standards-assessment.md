@@ -1,6 +1,7 @@
 # Development standards assessment
 
-Assessed on 2026-08-11 against the standards published at
+Documentation (D) assessed on 2026-10-20; other dimensions assessed on
+2026-08-11 against the standards published at
 https://curipedia.aircury.net/development-standards
 
 ## Position
@@ -8,7 +9,7 @@ https://curipedia.aircury.net/development-standards
 | Dimension | Code | Agreed | Observed | Outcome |
 | :--- | :--- | :--- | :--- | :--- |
 | Code review | R | R1 | ? | Unresolved |
-| Documentation and specifications | D | D1 | D0 | Short |
+| Documentation and specifications | D | D1 | D1 | Meets |
 | API contracts and interoperability | I | - | - | Not applicable |
 | Test coverage | C | C1 | ? | Unresolved |
 | E2E testing | E | - | - | Not applicable |
@@ -22,13 +23,13 @@ https://curipedia.aircury.net/development-standards
 | Support SLA | T | - | - | Not applicable |
 | Accessibility and browser support | A | - | - | Not applicable |
 
-## Gaps
+## Evidence
 
 ### D — documentation and specifications
 
-- Agreed: D1. Observed: D0.
-- Evidence: `README.md` describes library usage, but does not explain how to install, start, check, and contribute (operational README requirements).
-- To close: add an operational README section covering install, start, verification steps (tests/linters), and how to contribute, matching D1.
+- Agreed: D1. Observed: D1.
+- Evidence: `README.md` covers requirements, Composer installation, a runnable library example, PHPUnit and PHP syntax checks, and contributing. It explains that the library has no service to start and distinguishes syntax checking from static analysis.
+- Commands and requirements are based on `composer.json`, `phpunit.xml.dist`, and the collection implementation and tests.
 
 ## Not applicable
 
@@ -51,4 +52,3 @@ https://curipedia.aircury.net/development-standards
   - Evidence: the repository has no CI workflow definitions or pinned analyser configuration in-repo.
 - `S` — whether dependency vulnerability updates are automated and gated in CI cannot be established from repository files.
   - Evidence: no in-repo dependency update automation configuration (e.g. no `.github/dependabot.yml`) to verify.
-
