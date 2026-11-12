@@ -109,4 +109,10 @@ class StringCollectionTest extends TestCase
 
         $this->assertEquals('a, b, c', $strings->implode(', '));
     }
+
+    public function testLast(): void
+    {
+        $this->assertSame('c', (new StringCollection(['a', 'b', 'c']))->last());
+        $this->assertFalse((new StringCollection())->last());
+    }
 }

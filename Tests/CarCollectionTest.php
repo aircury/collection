@@ -317,4 +317,184 @@ class CarCollectionTest extends TestCase
 
         $this->assertFalse($cars->isAssociative());
     }
+
+    public function testAppendOutOfOrderKeys(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $d = new Car('Seat');
+        $cars = new CarCollection([$a, $b]);
+
+        $cars->append([3 => $d, 2 => $c]);
+
+        $this->assertSame([$a, $b, $d, $c], $cars->toArray());
+    }
+
+    public function testValuesAndKeysArrays(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $cars = new CarCollection(['x' => $a, 42 => $b]);
+
+        $this->assertSame([$a, $b], $cars->toValuesArray());
+        $this->assertSame(['x', 42], $cars->toKeysArray());
+    }
+
+    public function testLast(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+
+        $this->assertSame($b, (new CarCollection([$a, $b]))->last());
+        $this->assertFalse((new CarCollection())->last());
+    }
+
+    public function testPopAndShift(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $cars = new CarCollection([$a, $b, $c]);
+
+        $this->assertSame($c, $cars->pop());
+        $this->assertSame($a, $cars->shift());
+        $this->assertSame([$b], $cars->toArray());
+
+        $empty = new CarCollection();
+
+        $this->assertNull($empty->pop());
+        $this->assertNull($empty->shift());
+    }
+
+    public function testMergeCollections(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $cars = new CarCollection([$a]);
+
+        $cars->mergeCollections(new CarCollection([$b]), new CarCollection(), new CarCollection([$c]));
+
+        $this->assertSame([$a, $b, $c], $cars->toArray());
+
+        $cars->mergeCollections(new CarCollection(), new CarCollection());
+
+        $this->assertSame([$a, $b, $c], $cars->toArray());
+    }
+
+    public function testPrepend(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $cars = new CarCollection([$a, $b]);
+
+        $cars->prepend([$c]);
+
+        $this->assertSame([$c, $a, $b], $cars->toArray());
+    }
+
+    public function testPrependCollection(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $cars = new CarCollection([$a, $b]);
+
+        $other = new CarCollection([$c]);
+
+        $cars->prependCollection($other);
+
+        $this->assertSame([$c, $a, $b], $cars->toArray());
+        $this->assertSame([$c], $other->toArray());
+    }
+
+    public function testFilter(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $cars = new CarCollection(['a' => $a, 'b' => $b, 'c' => $c]);
+        $notBmw = static fn(Car $car): bool => 'BMW' !== $car->getMake();
+
+        $filtered = $cars->filter($notBmw);
+
+        $this->assertInstanceOf(CarCollection::class, $filtered);
+        $this->assertNotSame($cars, $filtered);
+        $this->assertSame(['a' => $a, 'c' => $c], $filtered->toArray());
+        $this->assertCount(3, $cars);
+
+        $this->assertSame($cars, $cars->filter($notBmw, false));
+        $this->assertSame(['a' => $a, 'c' => $c], $cars->toArray());
+    }
+
+    public function testRemoveElementByKey(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $cars = new CarCollection(['a' => $a, 'b' => $b]);
+
+        $this->assertTrue($cars->removeElementByKey('a'));
+        $this->assertFalse($cars->removeElementByKey('a'));
+        $this->assertSame(['b' => $b], $cars->toArray());
+    }
+
+    public function testDebug(): void
+    {
+        $named = new class('Porsche') extends Car implements \Stringable {
+            public function __toString(): string
+            {
+                return $this->getMake();
+            }
+        };
+        $cars = new CarCollection(['named' => $named, 'plain' => new Car('BMW')]);
+
+        $this->assertSame(['named' => 'Porsche', 'plain' => Car::class], $cars->debug());
+    }
+
+    public function testIllegalOffsetType(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        $cars = new CarCollection();
+
+        $cars->offsetSet(1.5, new Car('Porsche'));
+    }
+
+    public function testAddingNothing(): void
+    {
+        $a = new Car('Porsche');
+        $cars = new CarCollection([$a]);
+
+        $cars->merge([]);
+        $cars->mergeCollection(new CarCollection());
+        $cars->append([]);
+
+        $this->assertSame([$a], $cars->toArray());
+    }
+
+    public function testInvalidAppendToList(): void
+    {
+        $this->expectException(ProtectedKeyException::class);
+
+        $cars = new CarCollection([new Car('Porsche'), new Car('BMW')]);
+
+        $cars->append([5 => new Car('Audi')]);
+    }
+
+    public function testMap(): void
+    {
+        $cars = new CarCollection(['a' => new Car('Porsche')]);
+        $upper = static fn(Car $car): Car => new Car(strtoupper($car->getMake()));
+
+        $mapped = $cars->map($upper);
+
+        $this->assertNotSame($cars, $mapped);
+        $this->assertSame('PORSCHE', $mapped['a']->getMake());
+        $this->assertSame('Porsche', $cars['a']->getMake());
+
+        $this->assertSame($cars, $cars->map($upper, false));
+        $this->assertSame('PORSCHE', $cars['a']->getMake());
+    }
 }
