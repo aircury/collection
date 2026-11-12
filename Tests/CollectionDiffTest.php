@@ -162,4 +162,17 @@ class CollectionDiffTest extends TestCase
         $this->assertSame(['z', 'y', 'x'], array_keys($carDiff->apply($from)->toArray()));
         $this->assertSame(['x', 'y', 'z'], array_keys($carDiff->apply($from, true)->toArray()));
     }
+
+    public function testChangedElement(): void
+    {
+        $a = new ComparableCar('Ford');
+        $b = new ComparableCar('BMW');
+        $carDiff = new CollectionDiff(
+            new ComparableCarCollection(['x' => $a]),
+            new ComparableCarCollection(['x' => $b])
+        );
+
+        $this->assertSame(1, $carDiff->getChangesCount());
+        $this->assertSame(['x' => [CollectionDiff::CHANGED, $b]], $carDiff->getChanges());
+    }
 }
