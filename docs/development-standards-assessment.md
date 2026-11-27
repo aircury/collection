@@ -5,8 +5,7 @@ https://curipedia.aircury.net/development-standards (fetched 2026-11-27; the
 page carries no revision identifier, so the revision is recorded as the
 SHA-256 of the fetched document, prefix `165bfc0e107b`).
 
-Project revision observed: `6bc52ec` on branch `2syqb9RIOwo3`. `make ci`
-passes on it.
+Project revision observed: `d1d8e28` on branch `DS4`. `make ci` passes on it.
 
 Project type: internal tool in production.
 
@@ -17,7 +16,7 @@ Project type: internal tool in production.
 | Code review | R | R3 | R1 | Short |
 | Documentation and specifications | D | D1 | D1 | Meets |
 | API contracts and interoperability | I | - | - | Not applicable |
-| Test coverage | C | C2 | None | Short |
+| Test coverage | C | C2 | C4 | Meets |
 | E2E testing | E | - | - | Not applicable |
 | Static analysis | L | L2 | L1 | Short |
 | Deployment | Y | - | - | Not applicable |
@@ -42,17 +41,6 @@ Project type: internal tool in production.
   check and one approving review (available, as the repository is public),
   and add a `CODEOWNERS` file with a single catch-all rule whose handles are
   verified to resolve.
-
-### C — test coverage
-
-- Agreed: C2. Observed: no coverage gate.
-- Evidence: `phpunit.xml.dist` declares a `<source>` but CI collects no
-  coverage; the image built from `Dockerfile` has no coverage driver (no
-  Xdebug or PCOV), and `make ci` prints that coverage is still to be added.
-- To close: add a coverage driver to the image, make `make ci` enforce a line
-  threshold pinned just below the measured figure (never below 50%) with the
-  measurement and its date recorded beside it, and fail naming every source
-  file with no covered line unless an exemption list names it with a reason.
 
 ### L — static analysis
 
@@ -79,7 +67,8 @@ Project type: internal tool in production.
 - Evidence: Overboards is not configured to update this repository's
   dependencies (stated by the person who invoked this run; not visible in the
   repository). No dependency vulnerability audit runs in `make ci` or CI, and
-  no vulnerability threshold policy is documented.
+  no vulnerability threshold policy is documented. `composer audit` reports 6
+  advisories affecting 2 locked packages.
 - To close: configure Overboards' daily dependency updates for the
   repository, document the vulnerability threshold policy, and add a
   `composer audit` gate to `make ci` that blocks above it.
@@ -97,7 +86,7 @@ Project type: internal tool in production.
 
 ## Repository-level requirements
 
-38 of 103 repository-checkable requirements are met (26 not met, 37 not
+43 of 107 repository-checkable requirements are met (25 not met, 37 not
 applicable, 2 not assessed).
 
 | Section | Requirement | Outcome | Evidence |
@@ -138,11 +127,10 @@ applicable, 2 not assessed).
 | Static analysis | Every ratchet gate offers check, report and update, with distinct exit codes | Not applicable | No ratchet gates |
 | PHP projects | A static PHP analyser at L2 or above | Not met | PHPStan runs at level `max` with zero errors, but L2 is incomplete (see L) |
 | PHP projects | A coding standard with a format check | Not met | No PHP-CS-Fixer or PHP_CodeSniffer check in `make ci` or CI |
-| PHP projects | Unit and integration tests with the coverage gate at the agreed level | Not met | No coverage gate (see C) |
 | Continuous integration | The production build of every deployable part succeeds in CI, failing on unaccepted warnings | Not applicable | Nothing is deployed |
 | Continuous integration | The gate names its stages: one command lists them, another re-runs one | Not met | No stage list or re-run command |
 | Continuous integration | The local gate applies deterministic formatters, naming changed files, and CI checks format strictly | Not met | No formatter in the gate |
-| Continuous integration | Repository conventions are enforced by tests that discover their subjects from the filesystem, and every project-written check is tested red, green and "could not judge" | Not met | No convention tests; the rules the standards say a check verifies (workflow concurrency, `closed` and draft handling, runner selection and naming, fixed runner images) hold in `ci.yml` but nothing checks them |
+| Continuous integration | Repository conventions are enforced by tests that discover their subjects from the filesystem, and every project-written check is tested red, green and "could not judge" | Not met | No convention tests; the rules the standards say a check verifies (workflow concurrency, `closed` and draft handling, runner selection and naming, fixed runner images) hold in `ci.yml` but nothing checks them. `ci/check-coverage.php` and `ci/check-thresholds.php` have no tests proving their red, green and "could not judge" (exit 2) outcomes |
 | Continuous integration | Dependencies and images are cached across jobs, keyed from the lock files | Not met | `vendor/` and `bin/` are cached by `composer.lock`; the image is rebuilt every run |
 | Continuous integration | GitHub-hosted jobs name a fixed image matching the internal runners' release, verified by a check | Not assessed | `ubuntu-24.04` is fixed; the internal runners' Ubuntu release is not visible from the repository |
 | Continuous integration | On persistent runners every job cleans the workspace before checkout | Not met | No clean step |
@@ -163,12 +151,12 @@ applicable, 2 not assessed).
 | Security → CI supply chain | A release build holding cloud credentials installs nothing outside the lockfiles | Not applicable | No release build |
 | Security → CI supply chain | CI checks every manifest against its lockfile, and that each locked entry states its source, an integrity hash and the expected registry | Not met | `composer.lock` is committed, but nothing checks it; `aircury/code-manager` comes from a VCS repository, locked to branch `dev-dev-standards-phpstan` with no dist checksum |
 | Security → CI supply chain | Install scripts and package-manager plugins run only for packages on a reviewed allow list | Not met | `composer.json` has no `allow-plugins` list and no check |
-| Security → CI supply chain | Third-party tools and images are pinned exactly, with one version source covered by automated updates | Not met | Images are pinned by digest and the editorconfig checker by version and checksum, but no automated update covers them |
+| Security → CI supply chain | Third-party tools and images are pinned exactly, with one version source covered by automated updates | Not met | Images are pinned by digest, PCOV by version (`pcov-1.0.12`) and the editorconfig checker by version and checksum, but no automated update covers them |
 | Security → CI supply chain | One record lists the versions of the building blocks, where each is pinned, its source and when it was verified | Not met | No such record |
 | Security → CI supply chain | CI fails a change that moves a package across a major version it did not ask for | Not met | No such check |
 | Security → CI supply chain | Shared or third-party agent skills are pinned and never edited in the project | Not applicable | The project carries no agent skills |
 
-Code behaviour, for a code review (25, not assessed in this run):
+Code behaviour, for a code review (26, not assessed in this run):
 
 - Architecture (14): stateless services; operational vs programmer errors;
   optimistic concurrency with 409 on conflict; no silent catch blocks; safe
@@ -183,5 +171,6 @@ Code behaviour, for a code review (25, not assessed in this run):
   sliding expiry under an absolute ceiling; high-entropy secrets stored as
   hashes; credential cookie attributes; development shortcuts absent from
   published builds; complete Link-hub delegation.
+- Testing (1): every new test proven by breaking the code it covers.
 - Infrastructure and databases (3): bounded index keys; database-allocated
   sequence numbers; one query per sibling collection.

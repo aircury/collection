@@ -21,6 +21,8 @@
         </include>
         <exclude>
             <directory>Tests</directory>
+            <directory>bin</directory>
+            <directory>ci</directory>
             <directory>vendor</directory>
         </exclude>
     </source>

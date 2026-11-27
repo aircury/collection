@@ -93,9 +93,12 @@ Run the whole gate, exactly as CI runs it, before submitting:
 make ci
 ```
 
-It runs the editorconfig check first, then installs the dependencies and runs
-the tests and PHPStan in parallel. Every failure in
-a stage is reported together. Nothing in it is CI-only.
+It first runs, in parallel, the editorconfig check and `make thresholds`, which
+fails if any minimum in `coverage-threshold.json` is lower than on
+`origin/master` where your branch left it (fetch it first; set
+`TARGET_BRANCH=...` for another base). It then installs the dependencies and
+runs the tests with coverage and PHPStan in parallel. Every failure in a stage
+is reported together. Nothing in it is CI-only.
 
 While working, run each check over just the files you changed:
 
@@ -104,6 +107,9 @@ make test PATHS=Tests/StringCollectionTest.php
 make phpstan PATHS="StringCollection.php Tests/StringCollectionTest.php"
 make editorconfig PATHS="README.md Makefile"
 ```
+
+Coverage and `make thresholds` take no `PATHS`: they judge the project as a
+whole.
 
 ## Contributing
 

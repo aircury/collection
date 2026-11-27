@@ -50,6 +50,8 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
+          # make thresholds compares coverage minimums with the target branch, so it needs its history.
+          fetch-depth: 0
 
       - name: Cache dependencies and tools
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -63,3 +65,5 @@ jobs:
         run: make ci
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+          # The pull request's base branch; master for pushes and manual runs.
+          TARGET_BRANCH: ${{ github.base_ref || 'master' }}

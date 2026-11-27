@@ -278,9 +278,7 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function prependCollection(AbstractCollection $collection): void
     {
-        $collection->appendCollection($this);
-
-        $this->elements = $collection->toArray();
+        $this->prepend($collection->toArray());
     }
 
     public function usort(callable $sort): void
