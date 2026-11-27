@@ -1,15 +1,63 @@
 name: CI
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, closed]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions: {}
+
 jobs:
-  ci:
+  runner-target:
+    name: Require runner target
     runs-on: ubuntu-24.04
+    if: ${{ !github.event.pull_request.draft && github.event.action != 'closed' }}
+    outputs:
+      runs-on: ${{ steps.resolve.outputs.runs-on }}
+    steps:
+      - name: Resolve ACTIONS_RUNNER_TARGET
+        id: resolve
+        env:
+          TARGET: ${{ vars.ACTIONS_RUNNER_TARGET }}
+        run: |
+          case "$TARGET" in
+            self-hosted) echo 'runs-on=self-hosted' >> "$GITHUB_OUTPUT" ;;
+            github-hosted) echo 'runs-on=ubuntu-24.04' >> "$GITHUB_OUTPUT" ;;
+            '')
+              echo '::error::The ACTIONS_RUNNER_TARGET repository variable is not set. Set it to self-hosted or github-hosted.'
+              exit 1
+              ;;
+            *)
+              echo "::error::ACTIONS_RUNNER_TARGET is '$TARGET'. Expected self-hosted or github-hosted."
+              exit 1
+              ;;
+          esac
+
+  ci:
+    needs: runner-target
+    runs-on: ${{ needs.runner-target.outputs.runs-on }}
+    permissions:
+      contents: read
     steps:
       - name: Check out Collection
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Cache dependencies and tools
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            vendor
+            bin
+          key: ${{ runner.os }}-${{ runner.arch }}-deps-${{ hashFiles('composer.lock', 'Makefile') }}
 
       - name: Run make ci
         run: make ci

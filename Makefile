@@ -38,7 +38,9 @@ image: ## Build the library image
 	docker build --tag $(IMAGE) - < Dockerfile
 
 .PHONY: ci
-ci: init test editorconfig ## Run every check inside the library container
+ci: ## Run every check inside the library container: cheap checks in parallel first, then the tests
+	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target editorconfig
+	@$(MAKE) --no-print-directory init test
 	@$(MESSAGE) "TODO: Add coverage, PHPStan and the vulnerability audit."
 
 .PHONY: test
@@ -47,7 +49,7 @@ test: ## Run PHPUnit inside the library container, optionally narrowed with PATH
 	$(APP) bin/phpunit $(PATHS)
 
 .PHONY: editorconfig
-editorconfig: $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container, optionally narrowed with PATHS=...
+editorconfig: image $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container, optionally narrowed with PATHS=...
 	@$(MESSAGE) "Checking editor config..."
 	$(APP) $(EDITORCONFIG_CHECKER) -exclude '$(EDITORCONFIG_EXCLUDE)' $(PATHS)
 
