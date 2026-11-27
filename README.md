@@ -84,31 +84,26 @@ If they do not suit your needs, you can extend any of them or the `AbstractScala
 
 ## Checks
 
-After `composer install` (including development dependencies), run the full
-PHPUnit suite using the committed `phpunit.xml.dist` configuration:
+The checks run inside the library's container, so they need only Docker and
+Make on the host. `make` with no arguments lists every command.
+
+Run the whole gate, exactly as CI runs it, before submitting:
 
 ```sh
-bin/phpunit
+make ci
 ```
 
-To check one test file or method while working:
+It runs the editorconfig check first, then installs the dependencies and runs
+the tests and PHPStan in parallel. Every failure in
+a stage is reported together. Nothing in it is CI-only.
+
+While working, run each check over just the files you changed:
 
 ```sh
-bin/phpunit Tests/StringCollectionTest.php
-bin/phpunit --filter testBasicUsage Tests/StringCollectionTest.php
+make test PATHS=Tests/StringCollectionTest.php
+make phpstan PATHS="StringCollection.php Tests/StringCollectionTest.php"
+make editorconfig PATHS="README.md Makefile"
 ```
-
-Composer installs executables into `bin/`, not `vendor/bin/`. Check PHP syntax
-for all tracked PHP files, or just a changed file:
-
-```sh
-git ls-files -z '*.php' | xargs -0 -r -n 1 php -l
-php -l StringCollection.php
-```
-
-The syntax check is not static analysis. No project-level static-analysis
-configuration or CI workflow is committed, so these commands do not establish
-that a static-analysis or CI gate has passed.
 
 ## Contributing
 

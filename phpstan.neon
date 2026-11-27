@@ -17,7 +17,8 @@ parameters:
         - bin/
         - vendor/
     ignoreErrors:
-        # The vendor PHPDoc of Graph::createVertex() says int|null, but Vertex::__construct() accepts int|string
+        # The vendor PHPDoc of Graph::createVertex() says int|null, but Vertex::__construct() accepts int|string.
+        # Lift when clue/graph's PHPDoc accepts int|string: the entry then stops matching and PHPStan fails on it.
         -
             identifier: argument.type
             message: '#^Parameter \#1 \$id of method Fhaculty\\Graph\\Graph::createVertex\(\) expects int\|null, .+ given\.$#'

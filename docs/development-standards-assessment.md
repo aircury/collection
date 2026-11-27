@@ -5,8 +5,8 @@ https://curipedia.aircury.net/development-standards (fetched 2026-11-27; the
 page carries no revision identifier, so the revision is recorded as the
 SHA-256 of the fetched document, prefix `165bfc0e107b`).
 
-Project revision observed: `a112b6a` on branch `Pl4UC56nhNdH`, with
-`.gitattributes` and changes to `.github/workflows/ci.yml` uncommitted.
+Project revision observed: `6bc52ec` on branch `2syqb9RIOwo3`. `make ci`
+passes on it.
 
 Project type: internal tool in production.
 
@@ -19,7 +19,7 @@ Project type: internal tool in production.
 | API contracts and interoperability | I | - | - | Not applicable |
 | Test coverage | C | C2 | None | Short |
 | E2E testing | E | - | - | Not applicable |
-| Static analysis | L | L2 | None | Short |
+| Static analysis | L | L2 | L1 | Short |
 | Deployment | Y | - | - | Not applicable |
 | Backups and recovery | B | - | - | Not applicable |
 | Security | S | S2 | None | Short |
@@ -56,13 +56,22 @@ Project type: internal tool in production.
 
 ### L — static analysis
 
-- Agreed: L2. Observed: no analyser in CI.
-- Evidence: `bin/phpstan` is installed through `aircury/code-manager`, but no
-  PHPStan configuration is committed on this revision and neither `make ci`
-  nor `.github/workflows/ci.yml` runs an analyser.
-- To close: commit a PHPStan configuration with its level documented, run it
-  from `make ci` with zero errors permitted, and fail CI on unused Composer
-  packages (for example with composer-unused).
+- Agreed: L2. Observed: L1.
+- Evidence: `phpstan.neon` sets level `max` with no baseline, and
+  `make phpstan` runs in `make ci`'s second tier with zero errors.
+  What L2 adds beyond that is absent:
+  - no check that every Composer package is referenced or excused;
+    `phpspec/prophecy-phpunit` is declared in `require-dev` and no test
+    references Prophecy;
+  - the shape rules from `aircury/code-manager` are fixed ceilings (800 lines
+    per file, cyclomatic complexity 10, duplicate methods of 5+ statements):
+    there is no warning band or per-run size report for file size, test code
+    is not exempt from the size ceiling, and duplication is not budgeted as a
+    proportion per declared area.
+- To close: add a check in `make ci` that every Composer package, `require-dev`
+  included, is referenced or excused with a reason (for example composer-unused,
+  which judges only `require`), and bring the three shape gates to the
+  form L2 describes.
 
 ### S — security
 
@@ -88,19 +97,17 @@ Project type: internal tool in production.
 
 ## Repository-level requirements
 
-34 of 103 repository-checkable requirements are met (28 not met, 39 not
+38 of 103 repository-checkable requirements are met (26 not met, 37 not
 applicable, 2 not assessed).
 
 | Section | Requirement | Outcome | Evidence |
 | :--- | :--- | :--- | :--- |
 | Developing with Overboards | A plan to converge on Overboards lives in `docs/overboards-convergence-plan.md` | Not met | No such file |
 | Developing with Overboards | A non-standard Overboards contract is approved by the CAB and recorded | Not assessed | The board's contracts are not visible from the repository |
-| Commitment levels | Where what is automated is narrower than what is declared, the difference is recorded where it is declared | Not met | `composer.json` allows PHP `^8.2 \|\| ^8.3` and the README says 8.3 or later; CI tests only PHP 8.3, and the difference is recorded nowhere |
+| Commitment levels | Where what is automated is narrower than what is declared, the difference is recorded where it is declared | Not met | `composer.json` allows PHP `^8.2 \|\| ^8.3` and the README says 8.3 or a later 8.x; CI tests only PHP 8.3, and the difference is recorded nowhere |
 | Every repository → README | A project started from the company template records its adoption | Not applicable | The repository dates from 2017 and was not started from the template |
 | Every repository → Makefile | A command reprints a multi-service stack's addresses | Not applicable | No services; `make urls` says so |
-| Every repository → Makefile | Every check can run over named files, documented alongside `make ci` | Not met | `make test PATHS=...` and `make editorconfig PATHS=...` exist, but the README documents no `make` target; its Checks section describes host `bin/phpunit` and says no CI workflow is committed |
 | Every repository → Makefile | `make seed` loads a known example dataset | Not applicable | The library needs no data to be seen working |
-| Every repository → Makefile | Containers write as the invoking user, taken from the invoker under `sudo` | Not met | `--user "$(id -u):$(id -g)"` resolves to root under `sudo`; `SUDO_UID`/`SUDO_GID` are not used |
 | Every repository → Makefile | Docker Official Images are pulled from `public.ecr.aws/docker/library` | Not met | `Dockerfile` pulls `php` and `composer` from Docker Hub |
 | Every repository → Makefile | CI logs in to the registry through OIDC before pulling, falling back to anonymous with a warning | Not met | No registry login in the workflow |
 | Git and code review | The main branch is called `main` | Not met | Default branch is `master` |
@@ -126,12 +133,10 @@ applicable, 2 not assessed).
 | Testing | Tests that commit run in a throwaway database | Not applicable | No database |
 | Testing | A fake adapter is held to the real one by a shared contract suite | Not applicable | No adapters |
 | Static analysis | A baseline comes with a plan to zero and a target date, and CI fails when it grows | Not applicable | No baselines |
-| Static analysis | Every other allowance a check accepts is versioned data with a reason and a lifting condition | Not applicable | No check accepts allowances yet |
 | Static analysis | Shell scripts pass ShellCheck at `style`, pinned, found from the tracked files | Not applicable | No shell scripts are tracked |
 | Static analysis | Workflows pass a pinned linter such as actionlint | Not met | No workflow linter runs |
 | Static analysis | Every ratchet gate offers check, report and update, with distinct exit codes | Not applicable | No ratchet gates |
-| Static analysis | Tools behind a measured gate are pinned to an exact version | Not applicable | No measured gate yet |
-| PHP projects | A static PHP analyser at L2 or above | Not met | No analyser runs in CI (see L) |
+| PHP projects | A static PHP analyser at L2 or above | Not met | PHPStan runs at level `max` with zero errors, but L2 is incomplete (see L) |
 | PHP projects | A coding standard with a format check | Not met | No PHP-CS-Fixer or PHP_CodeSniffer check in `make ci` or CI |
 | PHP projects | Unit and integration tests with the coverage gate at the agreed level | Not met | No coverage gate (see C) |
 | Continuous integration | The production build of every deployable part succeeds in CI, failing on unaccepted warnings | Not applicable | Nothing is deployed |
@@ -156,7 +161,7 @@ applicable, 2 not assessed).
 | Security → At every level | Automated remediation by an AI agent runs inside the deterministic constraints | Not applicable | No autofix |
 | Security → CI supply chain | External actions are pinned by full commit SHA with the release in a comment, and a check rejects any other reference | Not met | Both actions are pinned by SHA; no check enforces it |
 | Security → CI supply chain | A release build holding cloud credentials installs nothing outside the lockfiles | Not applicable | No release build |
-| Security → CI supply chain | CI checks every manifest against its lockfile, and that each locked entry states its source, an integrity hash and the expected registry | Not met | `composer.lock` is committed, but nothing checks it; `aircury/code-manager` comes from a VCS repository |
+| Security → CI supply chain | CI checks every manifest against its lockfile, and that each locked entry states its source, an integrity hash and the expected registry | Not met | `composer.lock` is committed, but nothing checks it; `aircury/code-manager` comes from a VCS repository, locked to branch `dev-dev-standards-phpstan` with no dist checksum |
 | Security → CI supply chain | Install scripts and package-manager plugins run only for packages on a reviewed allow list | Not met | `composer.json` has no `allow-plugins` list and no check |
 | Security → CI supply chain | Third-party tools and images are pinned exactly, with one version source covered by automated updates | Not met | Images are pinned by digest and the editorconfig checker by version and checksum, but no automated update covers them |
 | Security → CI supply chain | One record lists the versions of the building blocks, where each is pinned, its source and when it was verified | Not met | No such record |
