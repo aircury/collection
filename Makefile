@@ -47,9 +47,9 @@ test: ## Run PHPUnit inside the library container, optionally narrowed with PATH
 	$(APP) bin/phpunit $(PATHS)
 
 .PHONY: editorconfig
-editorconfig: $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container
+editorconfig: $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container, optionally narrowed with PATHS=...
 	@$(MESSAGE) "Checking editor config..."
-	$(APP) $(EDITORCONFIG_CHECKER) -exclude '$(EDITORCONFIG_EXCLUDE)'
+	$(APP) $(EDITORCONFIG_CHECKER) -exclude '$(EDITORCONFIG_EXCLUDE)' $(PATHS)
 
 $(EDITORCONFIG_CHECKER): | image ## Downloads the pinned release and refuses it unless its checksum matches.
 	$(APP) sh -c 'set -e; \
