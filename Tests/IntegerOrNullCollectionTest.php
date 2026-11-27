@@ -51,6 +51,7 @@ class IntegerOrNullCollectionTest extends TestCase
         $this->expectException(UnexpectedElementException::class);
 
         $integers = new IntegerOrNullCollection();
+        // @phpstan-ignore offsetAssign.valueType (the test checks that an invalid element is rejected)
         $integers[] = 'a';
         $integers[] = 3;
     }
@@ -88,6 +89,7 @@ class IntegerOrNullCollectionTest extends TestCase
 
         $integers = new IntegerOrNullCollection(['A' => null]);
 
+        // @phpstan-ignore expr.resultUnused (the test checks that reading a missing key throws)
         $integers['X'];
     }
 

@@ -2,6 +2,10 @@
 
 namespace Aircury\Collection;
 
+/**
+ * @extends \ArrayAccess<array-key, object>
+ * @extends \IteratorAggregate<array-key, object>
+ */
 interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
@@ -9,30 +13,57 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
      */
     public function getClass(): string;
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetExists($offset): bool;
 
+    /**
+     * @param mixed $offset
+     * @param mixed $element Validated at runtime against getClass()
+     */
     public function offsetSet($offset, $element): void;
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetGet($offset): mixed;
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetUnset($offset): void;
 
+    /**
+     * @return array<array-key, object>
+     */
     public function toArray(): array;
 
     public function isEmpty(): bool;
 
     public function count(): int;
 
+    /**
+     * @return object|false
+     */
     public function first();
 
+    /**
+     * @return object|false
+     */
     public function last();
 
+    /**
+     * @return \ArrayIterator<array-key, object>
+     */
     public function getIterator(): \ArrayIterator;
 
     public function isAssociative(): bool;
 
     /**
      * Merges an array of elements to this Collection
+     *
+     * @param array<mixed> $elements
      */
     public function merge(array $elements): void;
 
@@ -48,6 +79,8 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
 
     /**
      * Appends elements at the end of the collection, but it cannot overwrite existing elements, unless is non-associative
+     *
+     * @param array<mixed> $elements
      */
     public function append(array $elements): void;
 
@@ -56,6 +89,9 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
      */
     public function appendCollection(AbstractCollection $collection): void;
 
+    /**
+     * @param array<mixed> $elements
+     */
     public function prepend(array $elements): void;
 
     public function prependCollection(AbstractCollection $collection): void;
@@ -79,6 +115,8 @@ interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggrega
     public function removeElement($element): bool;
 
     /**
+     * @param \Traversable<mixed> $elements
+     *
      * @return bool TRUE if this collection contained ALL the specified elements, FALSE otherwise.
      */
     public function removeElements(\Traversable $elements): bool;

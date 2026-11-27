@@ -31,8 +31,9 @@
         "graphp/algorithms": "^0.8.2"
     },
     "require-dev": {
-        "aircury/code-manager": "dev-main",
+        "aircury/code-manager": "dev-dev-standards-phpstan",
         "phpspec/prophecy-phpunit": "^2.2",
+        "phpstan/phpstan": "^2.1.11",
         "phpunit/phpunit": "^11.2"
     },
     "config": {

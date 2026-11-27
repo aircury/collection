@@ -52,6 +52,7 @@ class StringOrNullCollectionTest extends TestCase
 
         $strings = new StringOrNullCollection();
         $strings[] = 'a';
+        // @phpstan-ignore offsetAssign.valueType (the test checks that an invalid element is rejected)
         $strings[] = 3;
     }
 
@@ -88,6 +89,7 @@ class StringOrNullCollectionTest extends TestCase
 
         $strings = new StringOrNullCollection(['A' => 'a']);
 
+        // @phpstan-ignore expr.resultUnused (the test checks that reading a missing key throws)
         $strings['X'];
     }
 
@@ -108,5 +110,21 @@ class StringOrNullCollectionTest extends TestCase
 
         $this->assertEquals('a, c', $strings->implode(', '));
         $this->assertEquals('a, , c', $strings->implode(', ', false));
+    }
+
+    public function testRetrieveNullElement(): void
+    {
+        $strings = new StringOrNullCollection(['a', null]);
+
+        $this->assertNull($strings[1]);
+    }
+
+    public function testRetrieveByInvalidIntegerKey(): void
+    {
+        $this->expectException(InvalidKeyException::class);
+
+        $strings = new StringOrNullCollection(['a']);
+
+        $strings->offsetGet(5);
     }
 }

@@ -139,4 +139,27 @@ class CollectionDiffTest extends TestCase
         $this->assertCount(3, $carsAfterApplied);
         $this->assertEqualsCanonicalizing($otherCars->toArray(), $carsAfterApplied->toArray(), '');
     }
+
+    public function testApplyKeepsUnchangedElements(): void
+    {
+        $a = new ComparableCar('Ford');
+        $b = new ComparableCar('BMW');
+        $from = new ComparableCarCollection(['x' => $a]);
+        $to = new ComparableCarCollection(['x' => $a, 'y' => $b]);
+
+        $this->assertEquals($to, (new CollectionDiff($from, $to))->apply($from));
+    }
+
+    public function testApplyKeepingOriginalOrder(): void
+    {
+        $a = new ComparableCar('Ford');
+        $b = new ComparableCar('BMW');
+        $c = new ComparableCar('Mercedes');
+        $from = new ComparableCarCollection(['x' => $a, 'y' => $b]);
+        $to = new ComparableCarCollection(['z' => $c, 'y' => $b, 'x' => $a]);
+        $carDiff = new CollectionDiff($from, $to);
+
+        $this->assertSame(['z', 'y', 'x'], array_keys($carDiff->apply($from)->toArray()));
+        $this->assertSame(['x', 'y', 'z'], array_keys($carDiff->apply($from, true)->toArray()));
+    }
 }

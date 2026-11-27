@@ -9,20 +9,18 @@ abstract class AbstractStringCollection extends AbstractScalarTypeCollection
         return 'string';
     }
 
-    public function implode($glue = '', $skipNulls = true): string
+    public function implode(string $glue = '', bool $skipNulls = true): string
     {
-        if ($this->areNullsAllowed() && $skipNulls) {
-            $array = [];
+        $strings = [];
 
-            foreach ($this->toArray() as $element) {
-                if (null !== $element) {
-                    $array[] = $element;
-                }
+        foreach ($this->toArray() as $element) {
+            if (\is_string($element)) {
+                $strings[] = $element;
+            } elseif (!$skipNulls) {
+                $strings[] = '';
             }
-
-            return implode($glue, $array);
         }
 
-        return implode($glue, $this->toArray());
+        return implode($glue, $strings);
     }
 }

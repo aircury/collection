@@ -78,6 +78,7 @@ class CarCollectionTest extends TestCase
 
         $cars = new CarCollection();
         $cars[] = new Car();
+        // @phpstan-ignore offsetAssign.valueType (the test checks that an invalid element is rejected)
         $cars[] = new Human();
     }
 
@@ -101,6 +102,7 @@ class CarCollectionTest extends TestCase
 
         $cars = new CarCollection(['A' => new Car('Porsche')]);
 
+        // @phpstan-ignore expr.resultUnused (the test checks that reading a missing key throws)
         $cars['X'];
     }
 
@@ -259,5 +261,60 @@ class CarCollectionTest extends TestCase
         $empty->appendCollection($cars);
 
         $this->assertCount(2, $empty);
+    }
+
+    public function testRetrieveByInvalidIntegerKey(): void
+    {
+        $this->expectException(InvalidKeyException::class);
+
+        $cars = new CarCollection([new Car('Porsche')]);
+
+        $cars->offsetGet(5);
+    }
+
+    public function testRemoveElements(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+        $c = new Car('Audi');
+        $cars = new CarCollection([$a, $b]);
+
+        $this->assertTrue($cars->removeElements(new \ArrayIterator([$a, $b])));
+        $this->assertCount(0, $cars);
+
+        $cars = new CarCollection([$a]);
+
+        $this->assertFalse($cars->removeElements(new \ArrayIterator([$a, $c])));
+        $this->assertCount(0, $cars);
+    }
+
+    public function testInvalidElementMappedInPlace(): void
+    {
+        $this->expectException(UnexpectedElementException::class);
+
+        $cars = new CarCollection([new Car('Porsche')]);
+
+        $cars->map(static fn(Car $car): string => $car->getMake(), false);
+    }
+
+    public function testAssociativeAfterChanges(): void
+    {
+        $a = new Car('Porsche');
+        $b = new Car('BMW');
+
+        $cars = new CarCollection([$a, $b]);
+        $cars[3] = $b;
+
+        $this->assertTrue($cars->isAssociative());
+
+        $cars = new CarCollection([$a, $b, $a]);
+        $cars->removeElement($b);
+
+        $this->assertTrue($cars->isAssociative());
+
+        $cars = new CarCollection(['x' => $a, 'y' => $b]);
+        $cars->usort(static fn(Car $left, Car $right): int => $left->getMake() <=> $right->getMake());
+
+        $this->assertFalse($cars->isAssociative());
     }
 }

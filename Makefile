@@ -14,9 +14,10 @@ EDITORCONFIG_CHECKER = bin/editorconfig-checker-$(EDITORCONFIG_CHECKER_VERSION)
 EDITORCONFIG_EXCLUDE = ^\.idea/|\.iml$$|\.(phpunit\.result|php-cs-fixer)\.cache$$
 
 # Runs a command inside the app container, with this library mounted.
+# It writes as the invoking user (SUDO_UID/SUDO_GID under sudo), so it never leaves root-owned files.
 APP = docker run --rm \
 	--entrypoint "" \
-	--user "$$(id -u):$$(id -g)" \
+	--user "$${SUDO_UID:-$$(id -u)}:$${SUDO_GID:-$$(id -g)}" \
 	--env HOME=/tmp \
 	--env COMPOSER_AUTH \
 	--volume "$(CURDIR):/app" \
@@ -38,15 +39,21 @@ image: ## Build the library image
 	docker build --tag $(IMAGE) - < Dockerfile
 
 .PHONY: ci
-ci: ## Run every check inside the library container: cheap checks in parallel first, then the tests
+ci: ## Run every check inside the library container: cheap checks in parallel first, then the checks that need dependencies
 	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target editorconfig
-	@$(MAKE) --no-print-directory init test
-	@$(MESSAGE) "TODO: Add coverage, PHPStan and the vulnerability audit."
+	@$(MAKE) --no-print-directory init
+	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target test phpstan
+	@$(MESSAGE) "TODO: Add coverage and the vulnerability audit."
 
 .PHONY: test
 test: ## Run PHPUnit inside the library container, optionally narrowed with PATHS=...
 	@$(MESSAGE) "Running tests..."
 	$(APP) bin/phpunit $(PATHS)
+
+.PHONY: phpstan
+phpstan: ## Run PHPStan inside the library container, optionally narrowed with PATHS=...
+	@$(MESSAGE) "Running PHPStan..."
+	$(APP) bin/phpstan analyse --no-progress --memory-limit=1G $(PATHS)
 
 .PHONY: editorconfig
 editorconfig: image $(EDITORCONFIG_CHECKER) ## Check files against .editorconfig inside the library container, optionally narrowed with PATHS=...

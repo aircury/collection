@@ -6,49 +6,48 @@ use Aircury\Collection\Exceptions\InvalidKeyException;
 use Aircury\Collection\Exceptions\ProtectedKeyException;
 use Aircury\Collection\Exceptions\UnexpectedElementException;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class AbstractCollection implements CollectionInterface
 {
     /**
-     * @var mixed[]
+     * @var array<array-key, object>
      */
-    private $elements;
+    private array $elements;
+
+    private string $class;
 
     /**
-     * @var string
+     * @param array<mixed> $elements
      */
-    private $class;
-
-    /**
-     * @var bool
-     */
-    private $isAssociative = false;
-
     public function __construct(array $elements = [])
     {
         $this->class = $this->getClass();
 
+        $this->assertElements($elements);
+
+        $this->elements = $elements;
+    }
+
+    /**
+     * @param array<mixed> $elements
+     *
+     * @phpstan-assert array<array-key, object> $elements
+     */
+    private function assertElements(array $elements): void
+    {
         foreach ($elements as $element) {
-            if (!is_a($element, $this->class)) {
+            if (!$element instanceof $this->class) {
                 throw UnexpectedElementException::classConstraint($this->class, $element);
             }
         }
-
-        $this->elements = $elements;
-
-        $this->evaluateIfItIsAssociative();
     }
 
-    private function evaluateIfItIsAssociative(): void
-    {
-        if (
-            0 !== ($count = \count($this->elements)) &&
-            ($keys = array_keys($this->elements)) !== ($range = range(0, $count - 1)) &&
-            !$this->isSameButOutOfOrder($keys, $range)
-        ) {
-            $this->isAssociative = true;
-        }
-    }
-
+    /**
+     * @param array<int|string> $a
+     * @param array<int|string> $b
+     */
     private function isSameButOutOfOrder(array $a, array $b): bool
     {
         sort($a);
@@ -57,15 +56,21 @@ abstract class AbstractCollection implements CollectionInterface
         return $a === $b;
     }
 
+    /**
+     * @phpstan-assert-if-true int|string $offset
+     */
     public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->elements);
+        return (\is_int($offset) || \is_string($offset)) && array_key_exists($offset, $this->elements);
     }
 
     public function offsetGet($offset): mixed
     {
-        if (!isset($this->elements[$offset])) {
-            throw InvalidKeyException::invalidOffset($offset, array_keys($this->elements));
+        if (!$this->offsetExists($offset)) {
+            throw InvalidKeyException::invalidOffset(
+                \is_scalar($offset) ? (string) $offset : get_debug_type($offset),
+                array_keys($this->elements)
+            );
         }
 
         return $this->elements[$offset];
@@ -73,40 +78,45 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function offsetSet($offset, $element): void
     {
-        if (!is_a($element, $this->class)) {
+        if (!$element instanceof $this->class) {
             throw UnexpectedElementException::classConstraint($this->class, $element);
         }
 
         if (null === $offset) {
             $this->elements[] = $element;
+        } elseif (!\is_int($offset) && !\is_string($offset)) {
+            throw new \TypeError(sprintf('Illegal offset type: %s', get_debug_type($offset)));
         } else {
             $this->elements[$offset] = $element;
-
-            if (!$this->isAssociative && (!\is_numeric($offset) || $offset < 0 || $offset > \count($this->elements))) {
-                $this->isAssociative = true;
-            }
         }
     }
 
     public function offsetUnset($offset): void
     {
-        if (!$this->isAssociative && \is_numeric($offset) && $offset < \count($this->elements) - 1) {
-            $this->isAssociative = true;
+        if ($this->offsetExists($offset)) {
+            unset($this->elements[$offset]);
         }
-
-        unset($this->elements[$offset]);
     }
 
+    /**
+     * @param array<array-key, object> $elements
+     */
     protected function setElements(array $elements): void
     {
         $this->elements = $elements;
     }
 
+    /**
+     * @return array<array-key, object>
+     */
     public function toArray(): array
     {
         return $this->elements;
     }
 
+    /**
+     * @return list<object>
+     */
     public function toValuesArray(): array
     {
         return array_values($this->elements);
@@ -130,16 +140,25 @@ abstract class AbstractCollection implements CollectionInterface
         return \count($this->elements);
     }
 
+    /**
+     * @return object|false
+     */
     public function first()
     {
         return reset($this->elements);
     }
 
+    /**
+     * @return object|false
+     */
     public function last()
     {
         return end($this->elements);
     }
 
+    /**
+     * @return \ArrayIterator<array-key, object>
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->elements);
@@ -147,11 +166,16 @@ abstract class AbstractCollection implements CollectionInterface
 
     public function isAssociative(): bool
     {
-        return $this->isAssociative;
+        $keys = array_keys($this->elements);
+        sort($keys);
+
+        return $keys !== array_keys($keys);
     }
 
     /**
      * @inheritdoc
+     *
+     * @param array<mixed> $elements
      */
     public function merge(array $elements): void
     {
@@ -161,15 +185,9 @@ abstract class AbstractCollection implements CollectionInterface
             return;
         }
 
-        foreach ($elements as $element) {
-            if (!is_a($element, $this->class)) {
-                throw UnexpectedElementException::classConstraint($this->class, $element);
-            }
-        }
+        $this->assertElements($elements);
 
         $this->elements = array_merge($this->elements, $elements);
-
-        $this->evaluateIfItIsAssociative();
     }
 
     /**
@@ -182,8 +200,6 @@ abstract class AbstractCollection implements CollectionInterface
         }
 
         $this->elements = array_merge($this->elements, $collection->toArray());
-
-        $this->evaluateIfItIsAssociative();
     }
 
     public function mergeCollections(AbstractCollection ...$collections): void
@@ -201,12 +217,12 @@ abstract class AbstractCollection implements CollectionInterface
         }
 
         $this->elements = array_merge($this->elements, ...$arguments);
-
-        $this->evaluateIfItIsAssociative();
     }
 
     /**
      * @inheritdoc
+     *
+     * @param array<mixed> $elements
      */
     public function append(array $elements): void
     {
@@ -216,7 +232,7 @@ abstract class AbstractCollection implements CollectionInterface
             return;
         }
 
-        if ($this->isAssociative || 0 === \count($this->elements)) {
+        if ($this->isAssociative() || 0 === \count($this->elements)) {
             if (0 !== \count(array_intersect_key($this->elements, $elements))) {
                 throw ProtectedKeyException::overwritingKeys(
                     array_keys(array_intersect_key($this->elements, $elements))
@@ -248,6 +264,9 @@ abstract class AbstractCollection implements CollectionInterface
         $this->append($collection->toArray());
     }
 
+    /**
+     * @param array<mixed> $elements
+     */
     public function prepend(array $elements): void
     {
         $currentElements = $this->elements;
@@ -292,7 +311,7 @@ abstract class AbstractCollection implements CollectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @return static
      */
     public function map(\Closure $func, bool $returnNewCollection = true)
     {
@@ -302,6 +321,7 @@ abstract class AbstractCollection implements CollectionInterface
             return new static($elements);
         }
 
+        $this->assertElements($elements);
         $this->setElements($elements);
 
         return $this;
@@ -323,7 +343,7 @@ abstract class AbstractCollection implements CollectionInterface
         return false;
     }
 
-    public function removeElementByKey($elementKey): bool
+    public function removeElementByKey(int|string $elementKey): bool
     {
         // TODO: remove column from indexes and re-define indexes
         // TODO: the removed column could be a foreign key
@@ -339,10 +359,12 @@ abstract class AbstractCollection implements CollectionInterface
 
     /**
      * @inheritdoc
+     *
+     * @param \Traversable<mixed> $elements
      */
     public function removeElements(\Traversable $elements): bool
     {
-        $return = false;
+        $return = true;
 
         foreach ($elements as $element) {
             $return = $this->removeElement($element) && $return;
@@ -351,11 +373,17 @@ abstract class AbstractCollection implements CollectionInterface
         return $return;
     }
 
+    /**
+     * @return object|null
+     */
     public function pop()
     {
         return array_pop($this->elements);
     }
 
+    /**
+     * @return object|null
+     */
     public function shift()
     {
         return array_shift($this->elements);
@@ -366,12 +394,9 @@ abstract class AbstractCollection implements CollectionInterface
      */
     public function debug(): array
     {
-        $return = [];
 
-        foreach ($this->toArray() as $key => $element) {
-            $return[$key] = (string) $element;
-        }
-
-        return $return;
+        return array_map(function ($element) {
+            return $element instanceof \Stringable ? (string)$element : get_debug_type($element);
+        }, $this->toArray());
     }
 }

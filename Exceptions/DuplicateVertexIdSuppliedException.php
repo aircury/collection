@@ -6,7 +6,7 @@ class DuplicateVertexIdSuppliedException extends \LogicException
 {
     private const MESSAGE = 'All vertex IDs supplied must be unique';
 
-    public function __construct($code = 0, $previous = null)
+    public function __construct(int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct(self::MESSAGE, $code, $previous);
     }

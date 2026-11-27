@@ -157,12 +157,13 @@ class TarjanStronglyConnectedComponents
             $newSCC = [];
 
             do {
+                /** @var Vertex $poppedVertex Never null: $vertex itself is on the stack, so the loop stops before it empties */
                 $poppedVertex = array_pop($this->vertexStack);
 
                 unset($this->onStack[$poppedVertex->getId()]);
 
                 $newSCC[] = $poppedVertex;
-            } while ($vertex->getId() !== $poppedVertex->getID());
+            } while ($vertex->getId() !== $poppedVertex->getId());
 
             $this->stronglyConnectedComponents[] = new Vertices($newSCC);
         }
