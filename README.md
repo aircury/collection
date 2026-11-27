@@ -127,6 +127,45 @@ Report bugs and propose changes through
 [GitHub issues](https://github.com/aircury/collection/issues), including a minimal
 reproduction, your PHP version, and the expected and actual behaviour.
 
+## AI delivery board
+
+Work on Collection is queued and delivered by Overboards on a Boards board of
+its own.
+
+| | Production |
+| --- | --- |
+| Board | `https://boards.aircury.net/b/collection` |
+| API base | `https://api.boards.aircury.net` |
+| Token | The secret `COLLECTION_BOARD_TOKEN` in the Overboards service's secrets store |
+| Integration branch | `staging` |
+
+The active **Backlog** column on this board is the canonical backlog for
+Collection. Repository backlog files must not be created or used as a parallel
+queue. Before filing a finding, read the board digest to determine whether an
+active card already covers it, then use the `overboards-add-card` skill to
+enrich the covering card or create a missing card at the bottom of Backlog.
+
+The token is board-scoped, issued from the board's **Manage tokens** with the
+**Unattended contributor** shortcut, and entered once by one of the board's
+administrators on the Overboards Agents page, under Secrets: never in this
+repository, a shell environment or an environment file.
+
+Completed cards land on the `staging` integration branch; the first pipeline
+run creates it from `master`. The release pull request from `staging` into
+`master` is where a person reviews.
+
+## What a stage reads from this project
+
+| What a stage asks for | This project's answer |
+| --- | --- |
+| The governing standards | [Development standards](#development-standards) in this README, assessed in [docs/development-standards-assessment.md](docs/development-standards-assessment.md) |
+| The full verification gate | `make ci` from the repository root: builds the library image, installs dependencies, then runs PHPStan, the editor-configuration check and PHPUnit with the coverage threshold in `coverage-threshold.json` |
+| Targeted tests | `make test PATHS="Tests/<File>Test.php"` for named test files, `make phpstan`, `make editorconfig` and `make coverage`; run `make init` once first |
+| The browser harness for a screen item | None: this is a library with no UI |
+| Where a systemic lesson lands | This README's [Contributing](#contributing) section |
+| The canonical behaviour record | None beyond this README's [Usage](#usage) section and the PHPUnit suite in `Tests/` |
+| Application stack | None: `make up` starts no service |
+
 <!-- development-standards:begin -->
 ## Development standards
 
