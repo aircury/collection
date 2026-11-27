@@ -5,6 +5,8 @@ IMAGE ?= collection-app
 # Prints its argument in yellow, with a blank line before and after.
 MESSAGE = printf '\n\033[33m%s\033[0m\n\n'
 PATHS ?=
+# The branch a change lands on: its coverage minimums, read where this branch left it, are the floor.
+TARGET_BRANCH ?= master
 
 # Editor configuration checker variables.
 EDITORCONFIG_CHECKER_VERSION = v4.0.2
@@ -40,10 +42,10 @@ image: ## Build the library image
 
 .PHONY: ci
 ci: ## Run every check inside the library container: cheap checks in parallel first, then the checks that need dependencies
-	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target editorconfig
+	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target editorconfig thresholds
 	@$(MAKE) --no-print-directory init
 	@$(MAKE) --no-print-directory --keep-going --jobs --output-sync=target coverage phpstan
-	@$(MESSAGE) "TODO: Add coverage and the vulnerability audit."
+	@$(MESSAGE) "TODO: Add the vulnerability audit."
 
 .PHONY: test
 test: ## Run PHPUnit inside the library container, optionally narrowed with PATHS=...
@@ -54,6 +56,13 @@ test: ## Run PHPUnit inside the library container, optionally narrowed with PATH
 coverage: ## Run PHPUnit with coverage and check it against coverage-threshold.json
 	@$(MESSAGE) "Running tests with coverage..."
 	$(APP) sh -c 'bin/phpunit --coverage-clover /tmp/clover.xml && php ci/check-coverage.php /tmp/clover.xml'
+
+.PHONY: thresholds
+thresholds: image ## Fail if a coverage minimum is lower than on origin/$(TARGET_BRANCH) where this branch left it
+	@$(MESSAGE) "Checking coverage minimums against origin/$(TARGET_BRANCH)..."
+	@base="$$(git merge-base HEAD origin/$(TARGET_BRANCH))" \
+		|| { echo "Could not judge: no merge base with origin/$(TARGET_BRANCH). Fetch it first." >&2; exit 2; }; \
+	$(APP) php ci/check-thresholds.php "$$(git show "$$base:coverage-threshold.json" 2>/dev/null)"
 
 .PHONY: phpstan
 phpstan: ## Run PHPStan inside the library container, optionally narrowed with PATHS=...
